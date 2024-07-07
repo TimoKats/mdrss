@@ -1,5 +1,6 @@
 {
   "Author": "Timo Kats",
   "InputFolder": "test/",
-  "OutputFile": "index.xml"
+  "OutputFile": "index.xml",
+  "Link": "hello@timokats.xyz"
 }

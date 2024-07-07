@@ -7,12 +7,12 @@
 	<item>
 		<title> Another title</title>
 		<link> Another title</link>
-		<description>All hail king terry CIA glowtards!</description>
+		<description><p></p><p>All hail king terry CIA glowtards!</p></description>
 	</item>
 	<item>
 		<title> This is a title!</title>
 		<link> This is a title!</link>
-		<description>hello this is a description.</description>
+		<description><p></p><p>hello this is a description.</p></description>
 	</item>
 </channel>
 </rss>

@@ -35,7 +35,7 @@ func ReadMarkdown(config Config, files []string) []Article {
       if checkMarkdownTitle(scanner.Text()) && len(article.Title) == 0 {
         article.Title = scanner.Text()[1:len(scanner.Text())]
       } else {
-        article.Description += scanner.Text()
+        article.Description += "<p>" + scanner.Text() + "</p>"
       }
     }
     articles = append(articles, article)
