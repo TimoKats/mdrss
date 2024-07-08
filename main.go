@@ -1,25 +1,27 @@
 package main
 
 import (
-  "os"
   mdrss "mdrss/lib"
+  "os"
 )
 
+func parseCommand(command string, config mdrss.Config) error {
+  files := mdrss.GetFiles(config)
+  articles := mdrss.ReadMarkdown(config, files)
+  config.Articles = articles
+  rssXml := mdrss.CreateRSS(config)
+  mdrss.WriteRSS(rssXml, config)
+  return nil
+}
+
 func main() {
-  if len(os.Args) < 2 {
-    mdrss.Error.Println("No path to config.json given.")
-    return
-  }
-  configFile := os.Args[1]
-  if mdrss.FileExists(configFile) {
-    config, _ := mdrss.ReadConfig(configFile)
-    files := mdrss.GetFiles(config)
-    articles := mdrss.ReadMarkdown(config, files)
-    config.Articles = articles
-    rssXml := mdrss.CreateRSS(config)
-    mdrss.WriteRSS(rssXml, config)
+  if len(os.Args) != 2 { mdrss.Error.Println("mdrss <<update, ls>>"); return }
+  configPath := mdrss.GetConfigPath()
+  if mdrss.FileExists(configPath) {
+    config, _ := mdrss.ReadConfig(configPath)
+    parseCommand(os.Args[1], config)
   } else {
-    mdrss.Error.Println("No config.json found.")
+    mdrss.Error.Println("No ~/.mdrss/config.json found.")
   }
 }
 

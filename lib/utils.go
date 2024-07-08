@@ -21,3 +21,9 @@ func FileExists(filename string) bool {
   }
   return true
 }
+
+func GetConfigPath() string {
+	dirname, _ := os.UserHomeDir()
+	return dirname + "/.mdrss/config.json"
+}
+
