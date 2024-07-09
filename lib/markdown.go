@@ -2,6 +2,7 @@ package lib
 
 import (
   "io/ioutil"
+  "errors"
   "bufio"
   "os"
 )
@@ -13,15 +14,18 @@ func checkMarkdownTitle(text string) bool {
   return false
 }
 
-func GetFiles(config Config) []string {
-  RawFiles, _ := ioutil.ReadDir(config.InputFolder)
+func GetFiles(config Config) ([]string, error) {
+  RawFiles, fileErr := ioutil.ReadDir(config.InputFolder)
   files := []string{}
-  for _, file := range RawFiles {
-    if ! file.IsDir() {
-      files = append(files, file.Name())
+  if fileErr == nil {
+    for _, file := range RawFiles {
+      if !file.IsDir() {
+        files = append(files, file.Name())
+      }
     }
+    return files, nil
   }
-  return files
+  return files, errors.New("Error when getting files from input directory.")
 }
 
 func ReadMarkdown(config Config, files []string) []Article {
@@ -34,7 +38,7 @@ func ReadMarkdown(config Config, files []string) []Article {
     for scanner.Scan() {
       if checkMarkdownTitle(scanner.Text()) && len(article.Title) == 0 {
         article.Title = scanner.Text()[1:len(scanner.Text())]
-      } else {
+      } else if len(scanner.Text()) > 0 {
         article.Description += "<p>" + scanner.Text() + "</p>"
       }
     }

@@ -14,18 +14,10 @@ type Article struct {
   Language string
 }
 
-// type Channel struct {
-//   Name string
-//   Author string
-//   Articles []Article
-// 
-//   // optional fields
-//   CopyrightNotice string
-// }
-
 type Config struct {
+  Description string
   InputFolder string
-  OutputFile string 
+  OutputFile string
   Author string
 
   // optional fields
