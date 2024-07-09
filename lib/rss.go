@@ -11,8 +11,8 @@ func CreateRSS(config Config) string {
   xmlContent += "<rss version=\"2.0\">\n"
   xmlContent += "<channel>\n"
   xmlContent += "<title>" + config.Author + "</title>\n"
-  xmlContent += "<link>" + config.Author + "</link>\n"
-  xmlContent += "<description>" + config.Author + "</description>\n"
+  xmlContent += "<link>" + config.OutputFile + "</link>\n"
+  xmlContent += "<description>" + config.Description + "</description>\n"
 
   for _, article := range config.Articles {
     xmlContent += "\t<item>\n"
@@ -27,8 +27,8 @@ func CreateRSS(config Config) string {
 }
 
 func WriteRSS(rssContent string, config Config) error {
-    rssByte := []byte(rssContent)
-    err := os.WriteFile(config.OutputFile, rssByte, 0644)
-    return err
+  rssByte := []byte(rssContent)
+  err := os.WriteFile(config.OutputFile, rssByte, 0644)
+  return err
 }
 

@@ -2,26 +2,52 @@ package main
 
 import (
   mdrss "mdrss/lib"
+  "errors"
   "os"
 )
 
+func lsCommand(config mdrss.Config) error {
+  files, fileErr := mdrss.GetFiles(config)
+  if fileErr == nil {
+    for _, file := range files {
+      mdrss.Info.Println(file)
+    }
+  }
+  return fileErr 
+}
+
+func updateCommand(config mdrss.Config) error {
+  files, fileErr := mdrss.GetFiles(config)
+  if fileErr == nil {
+    config.Articles = mdrss.ReadMarkdown(config, files)
+    rssXml := mdrss.CreateRSS(config)
+    mdrss.WriteRSS(rssXml, config)
+    mdrss.Info.Printf("Content written to %s", config.OutputFile)
+  }
+  return fileErr
+}
+
+
 func parseCommand(command string, config mdrss.Config) error {
-  files := mdrss.GetFiles(config)
-  articles := mdrss.ReadMarkdown(config, files)
-  config.Articles = articles
-  rssXml := mdrss.CreateRSS(config)
-  mdrss.WriteRSS(rssXml, config)
+  switch (command) {
+    case "ls":
+      return lsCommand(config)
+    case "update":
+      return updateCommand(config)
+    default:
+      return errors.New("Command not found.")
+  }
   return nil
 }
 
 func main() {
   if len(os.Args) != 2 { mdrss.Error.Println("mdrss <<update, ls>>"); return }
   configPath := mdrss.GetConfigPath()
-  if mdrss.FileExists(configPath) {
-    config, _ := mdrss.ReadConfig(configPath)
+  config, configErr := mdrss.ReadConfig(configPath)
+  if configErr == nil {
     parseCommand(os.Args[1], config)
   } else {
-    mdrss.Error.Println("No ~/.mdrss/config.json found.")
+    mdrss.Error.Println(configErr)
   }
 }
 

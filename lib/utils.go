@@ -1,18 +1,18 @@
 package lib
 
 import (
-	"bufio"
-	"fmt"
+  "bufio"
+  "fmt"
   "os"
 )
 
 var Cyan = "\033[36m" 
 
 func ConsoleInput(message string) string {
-	in := bufio.NewReader(os.Stdin)
-	fmt.Print(Cyan + "ACTION:   " + Reset + message)
-	command, _ := in.ReadString('\n')
-	return string(command)
+  in := bufio.NewReader(os.Stdin)
+  fmt.Print(Cyan + "ACTION:   " + Reset + message)
+  command, _ := in.ReadString('\n')
+  return string(command)
 }
 
 func FileExists(filename string) bool {
@@ -23,7 +23,7 @@ func FileExists(filename string) bool {
 }
 
 func GetConfigPath() string {
-	dirname, _ := os.UserHomeDir()
-	return dirname + "/.mdrss/config.json"
+  dirname, _ := os.UserHomeDir()
+  return dirname + "/.mdrss/config.json"
 }
 
