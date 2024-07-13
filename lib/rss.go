@@ -1,8 +1,14 @@
 package lib
 
 import (
+  "time"
   "os"
 )
+
+func formatTimestamp(timestamp time.Time) string {
+  return timestamp.Format(time.RFC1123) 
+}
+
 
 func CreateRSS(config Config) string {
   var xmlContent string
@@ -10,19 +16,24 @@ func CreateRSS(config Config) string {
   xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
   xmlContent += "<rss version=\"2.0\">\n"
   xmlContent += "<channel>\n"
-  xmlContent += "<title>" + config.Author + "</title>\n"
+  xmlContent += "<title>" + config.Description + "</title>\n"
   xmlContent += "<link>" + config.OutputFile + "</link>\n"
   xmlContent += "<description>" + config.Description + "</description>\n"
 
   for _, article := range config.Articles {
+    if len(article.Title) == 0 {
+      continue
+    }
     xmlContent += "\t<item>\n"
     xmlContent += "\t\t<title>" + article.Title + "</title>\n"
     xmlContent += "\t\t<link>" + article.Title + "</link>\n"
-    xmlContent += "\t\t<description>" + article.Description + "</description>\n"
+    xmlContent += "\t\t<pubDate>" + formatTimestamp(article.DatePublished) + "</pubDate>\n"
+    xmlContent += "\t\t<description><![CDATA[" + article.Description + "]]></description>\n"
     xmlContent += "\t</item>\n"
+    Info.Printf("Added '%s' to RSS feed. ", article.Title)
   }
   
-  xmlContent += "</channel>\n</rss>"
+  xmlContent += "</channel>\n</rss>\n"
   return xmlContent 
 }
 

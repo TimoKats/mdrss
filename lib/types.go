@@ -7,6 +7,7 @@ import (
 type Article struct {
   Id int
   Title string
+  Filename string
   Description string
   DatePublished time.Time
 
