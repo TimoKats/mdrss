@@ -7,7 +7,7 @@ import (
 )
 
 func lsCommand(config mdrss.Config) error {
-  files, fileErr := mdrss.GetFiles(config)
+  files, fileErr := mdrss.GetArticles(config)
   if fileErr == nil {
     for _, file := range files {
       mdrss.Info.Println(file)
@@ -17,14 +17,22 @@ func lsCommand(config mdrss.Config) error {
 }
 
 func updateCommand(config mdrss.Config) error {
-  files, fileErr := mdrss.GetFiles(config)
+  files, fileErr := mdrss.GetArticles(config)
   if fileErr == nil {
     config.Articles = mdrss.ReadMarkdown(config, files)
     rssXml := mdrss.CreateRSS(config)
-    mdrss.WriteRSS(rssXml, config)
+    rssErr := mdrss.WriteRSS(rssXml, config)
+    if rssErr != nil {
+      return rssErr
+    }
     mdrss.Info.Printf("Content written to %s", config.OutputFile)
   }
   return fileErr
+}
+
+func confCommand(config mdrss.Config) error {
+  mdrss.Info.Printf("%#v\n", config)
+  return nil
 }
 
 
@@ -32,6 +40,8 @@ func parseCommand(command string, config mdrss.Config) error {
   switch (command) {
     case "ls":
       return lsCommand(config)
+    case "conf":
+      return confCommand(config)
     case "update":
       return updateCommand(config)
     default:
@@ -41,11 +51,17 @@ func parseCommand(command string, config mdrss.Config) error {
 }
 
 func main() {
-  if len(os.Args) != 2 { mdrss.Error.Println("mdrss <<update, ls>>"); return }
+  if len(os.Args) != 2 {
+    mdrss.Error.Println("mdrss <<update, ls, conf >>")
+    return
+  }
   configPath := mdrss.GetConfigPath()
   config, configErr := mdrss.ReadConfig(configPath)
   if configErr == nil {
-    parseCommand(os.Args[1], config)
+    commandErr := parseCommand(os.Args[1], config)
+    if commandErr != nil {
+      mdrss.Error.Println(commandErr)
+    }
   } else {
     mdrss.Error.Println(configErr)
   }

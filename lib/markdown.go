@@ -2,6 +2,7 @@ package lib
 
 import (
   "io/ioutil"
+  "strings"
   "errors"
   "bufio"
   "os"
@@ -14,35 +15,35 @@ func checkMarkdownTitle(text string) bool {
   return false
 }
 
-func GetFiles(config Config) ([]string, error) {
-  RawFiles, fileErr := ioutil.ReadDir(config.InputFolder)
-  files := []string{}
+func GetArticles(config Config) ([]Article, error) {
+  RawArticles, fileErr := ioutil.ReadDir(config.InputFolder)
+  articles := []Article{}
   if fileErr == nil {
-    for _, file := range RawFiles {
-      if !file.IsDir() {
-        files = append(files, file.Name())
+    for _, file := range RawArticles {
+      if !file.IsDir() && !strings.HasPrefix(file.Name(), "draft-") {
+        var article Article
+        article.Filename = file.Name() 
+        article.DatePublished = file.ModTime()
+        articles = append(articles, article)
       }
     }
-    return files, nil
+    return articles, nil
   }
-  return files, errors.New("Error when getting files from input directory.")
+  return articles, errors.New("Error when getting files from input directory.")
 }
 
-func ReadMarkdown(config Config, files []string) []Article {
-  var articles []Article 
-  for _, file := range files {
-    var article Article
-    filePath := config.InputFolder + "/" + file
+func ReadMarkdown(config Config, articles []Article) []Article {
+  for index, _ := range articles {
+    filePath := config.InputFolder + "/" + articles[index].Filename 
     readFile, _ := os.Open(filePath)
     scanner := bufio.NewScanner(readFile)
     for scanner.Scan() {
-      if checkMarkdownTitle(scanner.Text()) && len(article.Title) == 0 {
-        article.Title = scanner.Text()[1:len(scanner.Text())]
+      if checkMarkdownTitle(scanner.Text()) && len(articles[index].Title) == 0 {
+        articles[index].Title = scanner.Text()[2:len(scanner.Text())]
       } else if len(scanner.Text()) > 0 {
-        article.Description += "<p>" + scanner.Text() + "</p>"
+        articles[index].Description += "<p>" + scanner.Text() + "</p>"
       }
     }
-    articles = append(articles, article)
   }
   return articles
 }
