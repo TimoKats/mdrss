@@ -20,6 +20,7 @@ type Config struct {
   InputFolder string
   OutputFile string
   Author string
+  Link string
 
   // optional fields
   Articles []Article
