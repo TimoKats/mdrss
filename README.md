@@ -21,8 +21,7 @@ In your input folder, you can add an article by creating a `.md` file. **Note, i
 You can submit your RSS file to a public website, or put it somewhere easily available on a public drive, apache server, etc. Note, there is a chance I will make a function for this on my website so that people who can't host RSS feeds themselves can still publish their feeds. Please let me know if you're interested in such a service.
 
 ### Why RSS?
- * No ads/trackers.
- * No doomscrolling algorithm/dopamine cycles.
+ * No ads/trackers/cookies.
  * No distractions when reading (it's just text).
  * Many great RSS readers available (newsboat!) that can create custom feeds.
  * Doesn't require a strong internet connection.
