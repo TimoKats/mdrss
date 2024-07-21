@@ -47,7 +47,6 @@ func parseCommand(command string, config mdrss.Config) error {
     default:
       return errors.New("Command not found.")
   }
-  return nil
 }
 
 func main() {

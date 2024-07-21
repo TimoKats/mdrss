@@ -16,9 +16,9 @@ func addItem(xmlContent string, config Config, article Article) string {
   return xmlContent
 }
 
-func addHeader(xmlContent string, config Config) string {
+func addHeader(config Config) string {
   timestamp := time.Now().Format(time.RFC822)
-  xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+  xmlContent := "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
   xmlContent += "<rss version=\"2.0\">\n"
   xmlContent += "<channel>\n"
   xmlContent += "<title>" + config.Description + "</title>\n"
@@ -30,7 +30,7 @@ func addHeader(xmlContent string, config Config) string {
 }
 
 func CreateRSS(config Config) string {
-  xmlContent := addHeader("", config)
+  xmlContent := addHeader(config)
   for _, article := range config.Articles {
     if len(article.Title) != 0 {
       xmlContent = addItem(xmlContent, config, article)
