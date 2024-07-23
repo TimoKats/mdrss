@@ -1,7 +1,6 @@
 package lib
 
 import (
-  // "io/ioutil"
   "strings"
   "errors"
   "bufio"
