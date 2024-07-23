@@ -35,7 +35,6 @@ func confCommand(config mdrss.Config) error {
   return nil
 }
 
-
 func parseCommand(command string, config mdrss.Config) error {
   switch (command) {
     case "ls":
@@ -54,15 +53,14 @@ func main() {
     mdrss.Error.Println("mdrss <<update, ls, conf >>")
     return
   }
-  configPath := mdrss.GetConfigPath()
-  config, configErr := mdrss.ReadConfig(configPath)
-  if configErr == nil {
-    commandErr := parseCommand(os.Args[1], config)
-    if commandErr != nil {
-      mdrss.Error.Println(commandErr)
-    }
-  } else {
+  config, configErr := mdrss.ReadConfig()
+  if configErr != nil {
     mdrss.Error.Println(configErr)
+    return
+  }
+  commandErr := parseCommand(os.Args[1], config)
+  if commandErr != nil {
+    mdrss.Error.Println(commandErr)
   }
 }
 
