@@ -5,12 +5,34 @@ import (
   "testing"
 )
 
-func TestFileExists(t *testing.T){
+func testConfig() mdrss.Config {
+  var config mdrss.Config
+  config.Description = "Testing weblog"
+  config.InputFolder = "test-data/"
+  config.OutputFile = "index.xml"
+  config.Author = "Testing Test"
+  config.Link = "test@testing.com"
+  return config
+}
+
+func TestFileExists(t *testing.T) {
   got := mdrss.FileExists("main.go")
   want := true 
   if got != want {
     t.Errorf("got %v, wanted %v", got, want)
-  } else {
-    t.Log("Passed FileExists test.")
   }
 }
+
+func TestGetArticles(t *testing.T) {
+  config := testConfig()
+  articles, _ := mdrss.GetArticles(config)
+  got := []string{}
+  want := []string{"another-article.md"}
+  for _, article := range articles {
+    got = append(got, article.Filename)
+  }
+  if len(got) != len(want) {
+    t.Errorf("got %v, wanted %v", got, want)
+  }
+}
+
