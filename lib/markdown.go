@@ -1,7 +1,6 @@
 package lib
 
 import (
-  "io/ioutil"
   "strings"
   "errors"
   "bufio"
@@ -16,14 +15,15 @@ func checkMarkdownTitle(text string) bool {
 }
 
 func GetArticles(config Config) ([]Article, error) {
-  RawArticles, fileErr := ioutil.ReadDir(config.InputFolder)
+  RawArticles, fileErr := os.ReadDir(config.InputFolder)
   articles := []Article{}
   if fileErr == nil {
     for _, file := range RawArticles {
       if !file.IsDir() && !strings.HasPrefix(file.Name(), "draft-") {
         var article Article
+        fileInfo, _ := file.Info()
         article.Filename = file.Name() 
-        article.DatePublished = file.ModTime()
+        article.DatePublished = fileInfo.ModTime()
         articles = append(articles, article)
       }
     }
@@ -33,7 +33,7 @@ func GetArticles(config Config) ([]Article, error) {
 }
 
 func ReadMarkdown(config Config, articles []Article) []Article {
-  for index, _ := range articles {
+  for index := range articles {
     filePath := config.InputFolder + "/" + articles[index].Filename 
     readFile, _ := os.Open(filePath)
     scanner := bufio.NewScanner(readFile)

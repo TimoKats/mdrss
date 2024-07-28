@@ -10,9 +10,6 @@ type Article struct {
   Filename string
   Description string
   DatePublished time.Time
-
-  // optional fields
-  Language string
 }
 
 type Config struct {
