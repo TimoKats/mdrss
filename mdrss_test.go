@@ -8,7 +8,7 @@ import (
 func testConfig() mdrss.Config {
   var config mdrss.Config
   config.Description = "Testing weblog"
-  config.InputFolder = "test-data/"
+  config.InputFolder = "test/"
   config.OutputFile = "index.xml"
   config.Author = "Testing Test"
   config.Link = "test@testing.com"
@@ -32,6 +32,28 @@ func TestGetArticles(t *testing.T) {
     got = append(got, article.Filename)
   }
   if len(got) != len(want) {
+    t.Errorf("got %v, wanted %v", got, want)
+  }
+}
+
+func TestCreateMarkdown(t *testing.T) {
+  config := testConfig()
+  files, _ := mdrss.GetArticles(config)
+  config.Articles = mdrss.ReadMarkdown(config, files)
+  got := config.Articles[0].Title
+  want := "This article has a title." 
+  if got != want {
+    t.Errorf("got %v, wanted %v", got, want)
+  }
+}
+
+func TestCreateRSS(t *testing.T) {
+  config := testConfig()
+  files, _ := mdrss.GetArticles(config)
+  config.Articles = mdrss.ReadMarkdown(config, files)
+  got := len(mdrss.CreateRSS(config))
+  want := 481 
+  if got != want {
     t.Errorf("got %v, wanted %v", got, want)
   }
 }
