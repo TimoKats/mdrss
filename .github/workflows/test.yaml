@@ -1,0 +1,41 @@
+name: Test
+
+on:
+    pull_request:
+        types: [opened, reopened, synchronize]
+        branches:
+            - main
+
+jobs:
+  testing:
+    name: unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.21.2' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Run unit tests
+        run: go test
+
+  linter:
+    name: linter check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.21.2' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.59

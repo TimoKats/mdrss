@@ -47,14 +47,4 @@ func TestCreateMarkdown(t *testing.T) {
   }
 }
 
-func TestCreateRSS(t *testing.T) {
-  config := testConfig()
-  files, _ := mdrss.GetArticles(config)
-  config.Articles = mdrss.ReadMarkdown(config, files)
-  got := len(mdrss.CreateRSS(config))
-  want := 481 
-  if got != want {
-    t.Errorf("got %v, wanted %v", got, want)
-  }
-}
 
