@@ -10,26 +10,18 @@ jobs:
   testing:
     name: unit tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ '1.21.2' ]
-
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Go ${{ matrix.go-version }}
+      - name: Setup Go 1.21.2
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: 1.21.1
       - name: Run unit tests
         run: go test
 
   linter:
     name: linter check
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ '1.21.2' ]
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
