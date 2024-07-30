@@ -8,7 +8,7 @@ on:
 
 jobs:
   testing:
-    name: unit testing
+    name: unit tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,8 +24,12 @@ jobs:
         run: go test
 
   linter:
-    name: linter
+    name: linter check
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.21.2' ]
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
