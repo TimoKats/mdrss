@@ -1,7 +1,7 @@
 package main
 
 import (
-  mdrss "mdrss/lib"
+  mdrss "github.com/TimoKats/mdrss/lib"
   "errors"
   "os"
 )
