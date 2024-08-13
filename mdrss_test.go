@@ -1,7 +1,7 @@
 package main
 
 import (
-  mdrss "mdrss/lib"
+  mdrss "github.com/TimoKats/mdrss/lib"
   "testing"
 )
 
@@ -16,8 +16,8 @@ func testConfig() mdrss.Config {
 }
 
 func TestFileExists(t *testing.T) {
-  got := mdrss.FileExists("main.go")
-  want := true 
+  got := mdrss.FileExists("mdrss.go")
+  want := true
   if got != want {
     t.Errorf("got %v, wanted %v", got, want)
   }
