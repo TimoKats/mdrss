@@ -6,7 +6,7 @@ import (
 )
 
 func addItem(xmlContent string, config Config, article Article) string {
-  timestamp := article.DatePublished.Format(time.RFC822)
+  timestamp := article.DatePublished.Format(time.RFC822Z)
   xmlContent += "\t<item>\n"
   xmlContent += "\t\t<title>" + article.Title + "</title>\n"
   xmlContent += "\t\t<link>" + config.Link + "</link>\n"
@@ -17,7 +17,7 @@ func addItem(xmlContent string, config Config, article Article) string {
 }
 
 func addHeader(config Config) string {
-  timestamp := time.Now().Format(time.RFC822)
+  timestamp := time.Now().Format(time.RFC822Z)
   xmlContent := "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
   xmlContent += "<rss version=\"2.0\">\n"
   xmlContent += "<channel>\n"
