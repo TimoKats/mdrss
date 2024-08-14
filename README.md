@@ -20,6 +20,13 @@ In your input folder, you can add an article by creating a `.md` file. **Note, i
 ### Publishing the RSS file
 You can submit your RSS file to a public website, or put it somewhere easily available on a public drive, apache server, etc. Note, there is a chance I will make a function for this on my website so that people who can't host RSS feeds themselves can still publish their feeds. Please let me know if you're interested in such a service.
 
+### TODO
+List of features that are on the planning. Feel free to send suggestions here.
+ * Deal with links correctly. E.g. make a reference and show the links at the botton.
+ * Display source code from markdown more correctly.
+ * For non textual RSS readers: render images.
+
+   
 ### Why RSS?
  * No ads/trackers/cookies.
  * No distractions when reading (it's just text).
