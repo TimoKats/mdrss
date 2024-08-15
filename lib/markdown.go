@@ -41,7 +41,7 @@ func convertMarkdownList(text string) string {
 
 func ConvertMarkdownToRSS(text string) string {
   markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
-  markdownLists := regexp.MustCompile(`^(.*)(-|\*|\+)(.*)`)
+  markdownLists := regexp.MustCompile(`^(\s*)(-|\*|\+)(.*)`)
   if markdownLinks.Match([]byte(text)) {
     return convertMarkdownLink(text, markdownLinks)
   }
