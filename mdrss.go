@@ -13,7 +13,7 @@ func lsCommand(config mdrss.Config) error {
       mdrss.Info.Println(file)
     }
   }
-  return fileErr 
+  return fileErr
 }
 
 func updateCommand(config mdrss.Config) error {

@@ -2,6 +2,7 @@ package lib
 
 import (
   "strings"
+  "regexp"
   "errors"
   "bufio"
   "os"
@@ -12,6 +13,12 @@ func checkMarkdownTitle(text string) bool {
     return string(text[0]) == string("#")
   }
   return false
+}
+
+func ConvertMarkdownToRSS(text string) string {
+  markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
+  text = markdownLinks.ReplaceAllString(text, "<a href='$2'>$1</a>")
+  return "<p>" + text + "</p>"
 }
 
 func GetArticles(config Config) ([]Article, error) {
@@ -41,7 +48,7 @@ func ReadMarkdown(config Config, articles []Article) []Article {
       if checkMarkdownTitle(scanner.Text()) && len(articles[index].Title) == 0 {
         articles[index].Title = scanner.Text()[2:len(scanner.Text())]
       } else if len(scanner.Text()) > 0 {
-        articles[index].Description += "<p>" + scanner.Text() + "</p>"
+        articles[index].Description += ConvertMarkdownToRSS(scanner.Text())
       }
     }
   }

@@ -22,7 +22,6 @@ You can submit your RSS file to a public website, or put it somewhere easily ava
 
 ### TODO
 List of features that are on the planning. Feel free to send suggestions here.
- * Deal with links correctly. E.g. make a reference and show the links at the botton.
  * Display source code from markdown more correctly.
  * For non textual RSS readers: render images.
 
