@@ -2,6 +2,7 @@ package main
 
 import (
   mdrss "github.com/TimoKats/mdrss/lib"
+  "reflect"
   "errors"
   "os"
 )
@@ -31,8 +32,16 @@ func updateCommand(config mdrss.Config) error {
 }
 
 func confCommand(config mdrss.Config) error {
+	configValues := reflect.ValueOf(config)
+  typeOfS := configValues.Type()
   mdrss.Info.Println("MDRSS v0.0.3 by Timo Kats")
-  mdrss.Info.Println(config.InputFolder)
+  for i := 0; i < configValues.NumField(); i++ {
+    if len(typeOfS.Field(i).Name) < 8 {
+      mdrss.Info.Printf("%s\t\t%v\n", typeOfS.Field(i).Name, configValues.Field(i).Interface())
+    } else {
+      mdrss.Info.Printf("%s\t%v\n", typeOfS.Field(i).Name, configValues.Field(i).Interface())
+    }
+  }
   return nil
 }
 
