@@ -1,12 +1,15 @@
 package lib
 
 import (
+  "unicode"
   "strings"
   "regexp"
   "errors"
   "bufio"
   "os"
 )
+
+var markdownListActive bool
 
 func checkMarkdownTitle(text string) bool {
   if len(text) > 0 {
@@ -15,9 +18,39 @@ func checkMarkdownTitle(text string) bool {
   return false
 }
 
+func getLeadingWhitespace(text string) int {
+  for index, letter := range text {
+    if unicode.IsLetter(letter) {
+      return index
+    }
+  }
+  return 0
+}
+
+func convertMarkdownLink(text string, markdownLinks *regexp.Regexp) string {
+  return "<p>" + markdownLinks.ReplaceAllString(text, "<a href='$2'>$1</a>") + "</p>"
+}
+
+func convertMarkdownList(text string) string {
+  if !markdownListActive {
+    markdownListActive = true
+    return "<ul><li>" + text[getLeadingWhitespace(text):] + "</li>"
+  }
+  return "<li>" + text[getLeadingWhitespace(text):] + "</li>"
+}
+
 func ConvertMarkdownToRSS(text string) string {
   markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
-  text = markdownLinks.ReplaceAllString(text, "<a href='$2'>$1</a>")
+  markdownLists := regexp.MustCompile(`^(.*)(-|\*|\+)(.*)`)
+  if markdownLinks.Match([]byte(text)) {
+    return convertMarkdownLink(text, markdownLinks)
+  }
+  if markdownLists.Match([]byte(text)) {
+    return convertMarkdownList(text)
+  } else if markdownListActive {
+    markdownListActive = false
+    return "</ul><p>" + text + "</p>"
+  }
   return "<p>" + text + "</p>"
 }
 
