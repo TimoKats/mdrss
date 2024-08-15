@@ -47,6 +47,14 @@ func TestCreateMarkdown(t *testing.T) {
   }
 }
 
+func TestConvertLists(t *testing.T) {
+  want := "<ul><li>text</li>"
+  got := mdrss.ConvertMarkdownToRSS("  - text")
+  if got != want {
+    t.Errorf("got %v, wanted %v", got, want)
+  }
+}
+
 func TestConvertLinks(t *testing.T) {
   want := "<p>Click here for the <a href='https://timokats.xyz'>link</a></p>"
   got := mdrss.ConvertMarkdownToRSS("Click here for the [link](https://timokats.xyz)")
@@ -54,5 +62,4 @@ func TestConvertLinks(t *testing.T) {
     t.Errorf("got %v, wanted %v", got, want)
   }
 }
-
 
