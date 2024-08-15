@@ -74,6 +74,7 @@ func GetArticles(config Config) ([]Article, error) {
 
 func ReadMarkdown(config Config, articles []Article) []Article {
   for index := range articles {
+    markdownListActive = false
     filePath := config.InputFolder + "/" + articles[index].Filename 
     readFile, _ := os.Open(filePath)
     scanner := bufio.NewScanner(readFile)
