@@ -2,6 +2,7 @@ package main
 
 import (
   mdrss "github.com/TimoKats/mdrss/lib"
+  "flag"
   "reflect"
   "errors"
   "os"
@@ -58,16 +59,27 @@ func parseCommand(command string, config mdrss.Config) error {
 }
 
 func main() {
-  if len(os.Args) != 2 {
-    mdrss.Error.Println("mdrss <<update, ls, conf >>")
-    return
+  var config_path string
+  flag.StringVar(&config_path, "config", "~/.mdrss/config.json", "path to config.json")
+  flag.Parse()
+
+  var cmd string
+  switch len(os.Args) {
+    case 2:
+      cmd = os.Args[1]
+    case 4:
+      cmd = os.Args[3]
+    default:
+      mdrss.Error.Println("mdrss <<update, ls, conf >>")
+      return
   }
-  config, configErr := mdrss.ReadConfig()
+
+  config, configErr := mdrss.ReadConfig(config_path)
   if configErr != nil {
     mdrss.Error.Println(configErr)
     return
   }
-  commandErr := parseCommand(os.Args[1], config)
+  commandErr := parseCommand(cmd, config)
   if commandErr != nil {
     mdrss.Error.Println(commandErr)
   }
