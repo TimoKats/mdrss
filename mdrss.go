@@ -58,29 +58,29 @@ func parseCommand(command string, config mdrss.Config) error {
   }
 }
 
-func main() {
-  var config_path string
-  flag.StringVar(&config_path, "config", "~/.mdrss/config.json", "path to config.json")
-  flag.Parse()
-
-  var cmd string
+func selectCommand(args []string) (string, error) {
   switch len(os.Args) {
     case 2:
-      cmd = os.Args[1]
+      return os.Args[1], nil
     case 4:
-      cmd = os.Args[3]
+      return os.Args[3], nil
     default:
-      mdrss.Error.Println("mdrss <<update, ls, conf >>")
-      return
+      return "", errors.New("mdrss <<update, ls, conf>>")
   }
+}
 
-  config, configErr := mdrss.ReadConfig(config_path)
-  if configErr != nil {
+func main() {
+  var configPathFlag string
+  flag.StringVar(&configPathFlag, "config", "", "path to config.json")
+  flag.Parse()
+  command, commandErr := selectCommand(os.Args)
+  config, configErr := mdrss.ReadConfig(configPathFlag)
+  if err := errors.Join(commandErr, configErr); err != nil {
     mdrss.Error.Println(configErr)
     return
   }
-  commandErr := parseCommand(cmd, config)
-  if commandErr != nil {
+  runErr := parseCommand(command, config)
+  if runErr != nil {
     mdrss.Error.Println(commandErr)
   }
 }

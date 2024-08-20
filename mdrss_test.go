@@ -63,3 +63,16 @@ func TestConvertLinks(t *testing.T) {
   }
 }
 
+func TestBasics(t *testing.T) {
+  config := testConfig()
+  articles, _ := mdrss.GetArticles(config)
+  config.Articles = mdrss.ReadMarkdown(config, articles)
+  rssXml := mdrss.CreateRSS(config)
+  mdrss.WriteRSS(rssXml, config)
+  got := mdrss.FileExists("index.xml")
+  want := true
+  if got != want {
+    t.Errorf("got %v, wanted %v", got, want)
+  }
+}
+
