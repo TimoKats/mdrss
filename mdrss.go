@@ -2,7 +2,6 @@ package main
 
 import (
   mdrss "github.com/TimoKats/mdrss/lib"
-  "flag"
   "reflect"
   "errors"
   "os"
@@ -58,29 +57,16 @@ func parseCommand(command string, config mdrss.Config) error {
   }
 }
 
-func selectCommand(args []string) (string, error) {
-  switch len(os.Args) {
-    case 2:
-      return os.Args[1], nil
-    case 4:
-      return os.Args[3], nil
-    default:
-      return "", errors.New("mdrss <<update, ls, conf>>")
-  }
-}
-
 func main() {
-  var configPathFlag string
-  flag.StringVar(&configPathFlag, "config", "", "path to config.json")
-  flag.Parse()
-  command, commandErr := selectCommand(os.Args)
-  config, configErr := mdrss.ReadConfig(configPathFlag)
-  if err := errors.Join(commandErr, configErr); err != nil {
-    mdrss.Error.Println(configErr)
-    return
-  }
-  runErr := parseCommand(command, config)
-  if runErr != nil {
+  arguments, argumentErr := mdrss.ParseArguments(os.Args)
+  config, configErr := mdrss.ReadConfig(*arguments["config"])
+  mdrss.Info.Printf("Using config location: %v", *arguments["config"])
+  if err := errors.Join(argumentErr, configErr); err != nil {
+     mdrss.Error.Println(err)
+     return
+   }
+  commandErr := parseCommand(*arguments["command"], config)
+  if commandErr != nil {
     mdrss.Error.Println(commandErr)
   }
 }
