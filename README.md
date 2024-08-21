@@ -28,7 +28,8 @@ You can submit your RSS file to a public website, or put it somewhere easily ava
 List of features that are on the planning. Feel free to send suggestions here.
  * Display source code from markdown more correctly.
  * For non textual RSS readers: render images.
- * Ordered
+ * Ordered lists
+ * RSS enclosures for podcasts
 
 ### Why RSS?
  * No ads/trackers/cookies.
@@ -36,3 +37,6 @@ List of features that are on the planning. Feel free to send suggestions here.
  * Many great RSS readers available (newsboat!) that can create custom feeds.
  * Doesn't require a strong internet connection.
  * Amazing scene of personal blogs!
+
+### Support/requesting features
+You can always request fixes and features by opening an issue. If you want to support my work you can also sponsor this project through the button on the top right. Thank you!
