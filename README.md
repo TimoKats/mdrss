@@ -3,7 +3,11 @@
 MDRSS is a markdown to RSS converter written in GO. With this tool, you can write articles in a local folder and have them automatically formatted to an RSS compliant XML file. As a result, you don't have to write articles on your website first and have them be read by an RSS reader. Moreover, MDRSS automatically takes care of publication dates, categories (next update), formatting, etc.
 
 ### Getting started
-You can install the binary using `go install github.com/TimoKats/mdrss@latest` (make sure your GOPATH is set correctly!). After this you can add your configuration in `~/.mdrss/config.json`. This is a JSON file with a number of settings. You can use this template to setup your configuration
+You can install the binary using `go install github.com/TimoKats/mdrss@latest` (make sure your GOPATH is set correctly!). After this you can add your configuration in `~/.mdrss/config.json`. This is a JSON file with a number of settings. You can use this template to setup your configuration. Note, the most recent update also allows users to specify their own config path, which you can define like so.
+
+```shell
+mdrss --config other/path/to/config update
+```
 
 ```JSON
   {
@@ -24,9 +28,8 @@ You can submit your RSS file to a public website, or put it somewhere easily ava
 List of features that are on the planning. Feel free to send suggestions here.
  * Display source code from markdown more correctly.
  * For non textual RSS readers: render images.
- * Ordered and unordered lists(!)
+ * Ordered
 
-   
 ### Why RSS?
  * No ads/trackers/cookies.
  * No distractions when reading (it's just text).

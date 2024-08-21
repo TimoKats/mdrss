@@ -2,6 +2,7 @@ package main
 
 import (
   mdrss "github.com/TimoKats/mdrss/lib"
+  "os/exec"
   "testing"
 )
 
@@ -9,7 +10,7 @@ func testConfig() mdrss.Config {
   var config mdrss.Config
   config.Description = "Testing weblog"
   config.InputFolder = "test/"
-  config.OutputFile = "index.xml"
+  config.OutputFile = "rss.xml"
   config.Author = "Testing Test"
   config.Link = "test@testing.com"
   return config
@@ -68,11 +69,14 @@ func TestBasics(t *testing.T) {
   articles, _ := mdrss.GetArticles(config)
   config.Articles = mdrss.ReadMarkdown(config, articles)
   rssXml := mdrss.CreateRSS(config)
-  mdrss.WriteRSS(rssXml, config)
-  got := mdrss.FileExists("index.xml")
+  rssErr := mdrss.WriteRSS(rssXml, config)
+  got := mdrss.FileExists("rss.xml")
   want := true
-  if got != want {
+  if got != want || rssErr != nil {
     t.Errorf("got %v, wanted %v", got, want)
+  } else {
+    cmd := exec.Command("rm", "rss.xml")
+    cmd.Run()
   }
 }
 
