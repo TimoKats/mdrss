@@ -76,7 +76,10 @@ func TestBasics(t *testing.T) {
     t.Errorf("got %v, wanted %v", got, want)
   } else {
     cmd := exec.Command("rm", "rss.xml")
-    cmd.Run()
+    runErr := cmd.Run()
+    if runErr != nil {
+      mdrss.Error.Println(runErr)
+    }
   }
 }
 
