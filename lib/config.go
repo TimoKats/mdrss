@@ -6,11 +6,6 @@ import (
 	"os"
 )
 
-func getConfigPath() string {
-  dirname, _ := os.UserHomeDir()
-  return dirname + "/.mdrss/config.json"
-}
-
 func FileExists(filename string) bool {
   if _, err := os.Stat(filename); err != nil {
     return false
@@ -18,9 +13,8 @@ func FileExists(filename string) bool {
   return true
 }
 
-func ReadConfig() (Config, error) {
+func ReadConfig(configPath string) (Config, error) {
   var config Config
-  configPath := getConfigPath()
   if FileExists(configPath) {
     configContent, _ := os.ReadFile(configPath)
     jsonErr := json.Unmarshal(configContent, &config)

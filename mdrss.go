@@ -58,16 +58,14 @@ func parseCommand(command string, config mdrss.Config) error {
 }
 
 func main() {
-  if len(os.Args) != 2 {
-    mdrss.Error.Println("mdrss <<update, ls, conf >>")
-    return
-  }
-  config, configErr := mdrss.ReadConfig()
-  if configErr != nil {
-    mdrss.Error.Println(configErr)
-    return
-  }
-  commandErr := parseCommand(os.Args[1], config)
+  arguments, argumentErr := mdrss.ParseArguments(os.Args)
+  config, configErr := mdrss.ReadConfig(*arguments["config"])
+  mdrss.Info.Printf("Using config location: %v", *arguments["config"])
+  if err := errors.Join(argumentErr, configErr); err != nil {
+     mdrss.Error.Println(err)
+     return
+   }
+  commandErr := parseCommand(*arguments["command"], config)
   if commandErr != nil {
     mdrss.Error.Println(commandErr)
   }
