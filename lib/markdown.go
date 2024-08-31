@@ -31,6 +31,10 @@ func convertMarkdownLink(text string, markdownLinks *regexp.Regexp) string {
   return "<p>" + markdownLinks.ReplaceAllString(text, "<a href='$2'>$1</a>") + "</p>"
 }
 
+func convertMarkdownEnclosure(text string, markdownLinks *regexp.Regexp) string {
+  return "<enclosure " + markdownLinks.ReplaceAllString(text, "url='$2' type='$1'") + " />"
+}
+
 func convertMarkdownList(text string) string {
   if !markdownListActive {
     markdownListActive = true
@@ -42,6 +46,9 @@ func convertMarkdownList(text string) string {
 func ConvertMarkdownToRSS(text string) string {
   markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
   markdownLists := regexp.MustCompile(`^(\s*)(-|\*|\+)(.*)`)
+  if markdownLinks.Match([]byte(text)) && strings.Contains(text, "audio/mpeg") {
+    return convertMarkdownEnclosure(text, markdownLinks)
+  }
   if markdownLinks.Match([]byte(text)) {
     return convertMarkdownLink(text, markdownLinks)
   }
@@ -59,7 +66,7 @@ func GetArticles(config Config) ([]Article, error) {
   articles := []Article{}
   if fileErr == nil {
     for _, file := range RawArticles {
-      if !file.IsDir() && !strings.HasPrefix(file.Name(), "draft-") {
+      if !file.IsDir() && !strings.HasPrefix(file.Name(), "draft-") && strings.HasSuffix(file.Name(), ".md") {
         var article Article
         fileInfo, _ := file.Info()
         article.Filename = file.Name() 
