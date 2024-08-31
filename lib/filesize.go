@@ -1,51 +1,37 @@
 package lib
 
 import (
-  "strconv"
   "unicode"
   "strings"
   "os/exec"
-  "os"
+  "errors"
 )
 
-func extractInt(text string) int {
+func extractInt(text string) string {
   filteredString := ""
   for _, character := range text {
     if unicode.IsDigit(character) {
       filteredString += string(character)
     }
   }
-  integer, convErr := strconv.Atoi(filteredString)
-  if convErr != nil {
-    Error.Println(convErr)
-    return 1
+  if len(filteredString) == 0 {
+    return "1"
   } else {
-    return integer
+    return filteredString
   }
 }
 
-func FileSizeLocal(filename string) int {
-  fileInfo, fileErr := os.Stat(filename)
-  if fileErr != nil {
-    Error.Println(fileErr)
-    return 1
-  }
-  return int(fileInfo.Size())
-}
-
-func FileSizeUrl(url string) int {
+func FileSizeUrl(url string) (string, error) {
   cmd := exec.Command("curl", "-sIL", url)
   cmdOutput, cmdErr := cmd.Output()
   if cmdErr != nil {
-    Error.Println(cmdErr)
-    return 1
+    return "1", errors.New("Issues when running curl to get filesize.")
   } else {
     for _, line := range strings.Split(string(cmdOutput), "\n") {
       if strings.Contains(line, "content-length") {
-        return extractInt(line)
+        return extractInt(line), nil
       }
     }
   }
-  Error.Printf("No content-length found for %s", url)
-  return 1
+  return "1", errors.New("No content-length found for url")
 }

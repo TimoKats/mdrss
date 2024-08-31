@@ -32,7 +32,13 @@ func convertMarkdownLink(text string, markdownLinks *regexp.Regexp) string {
 }
 
 func convertMarkdownEnclosure(text string, markdownLinks *regexp.Regexp) string {
-  return "<enclosure " + markdownLinks.ReplaceAllString(text, "url='$2' type='$1'") + " />"
+  url := markdownLinks.ReplaceAllString(text, "$2")
+  size, fileSizeErr := FileSizeUrl(url)
+  if fileSizeErr != nil {
+    Error.Println(fileSizeErr)
+    return ""
+  }
+  return "<enclosure " + markdownLinks.ReplaceAllString(text, "url='$2' type='$1' length='") + size + "' />"
 }
 
 func convertMarkdownList(text string) string {
