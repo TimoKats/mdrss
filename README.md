@@ -20,9 +20,12 @@ Note, the most recent update also allows users to specify their own config path,
 mdrss --config other/path/to/config update
 ```
 
+#### Basic usage
+
 In your input folder, you can add an article by creating a `.md` file. **Note, if your filename is prefixed with `draft-` it will not be included in the RSS file**. Finally, you can type `mdrss ls` to view the articles ready for publishing and `mdrss update` to create the RSS feed. Note, the title of the RSS articles are based on markdown headers. E.g. format the first line of the markdown articles as so: `# this is a title`.  
 
-Mdrss also supports the usage of RSS enclosures (relevant for podcasts). To create an enclosure link: create a regular markdown link to the audio file with the identifier as "audio/mpeg".
+#### For podcasters
+Mdrss also supports the usage of RSS enclosures. To create an enclosure link: create a regular markdown link to the audio file with the identifier as "audio/mpeg".
 
 ```markdown
 [audio/mpeg](https://link.to.mp3/file.mp3)
