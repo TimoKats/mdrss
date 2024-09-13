@@ -64,7 +64,8 @@ func ConvertMarkdownToRSS(text string) string {
 	markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
 	markdownUnorderedLists := regexp.MustCompile(`^(\s*)(-|\*|\+)[\s](.*)`)
 	markdownOrderedLists := regexp.MustCompile(`^(\s*)(-?\d+)(\.\s+)(.*)$`)
-	fencedCodeBlock := regexp.MustCompile("^```")
+	fencedCodeBlock := regexp.MustCompile("^\x60\x60\x60")
+	inlineCodeBlock := regexp.MustCompile(`([\x60]+)([^\x60]+)([\x60]+)`)
 
 	// We don't want to format inside of a codeblock, so return early
 	if codeBlockOpen && !fencedCodeBlock.MatchString(text) {
@@ -116,60 +117,71 @@ func ConvertMarkdownToRSS(text string) string {
 			return out + "</code></pre>"
 		}
 	}
+	if inlineCodeBlock.Match([]byte(text)) {
+		out := inlineCodeBlock.ReplaceAllFunc([]byte(text), func(b []byte) []byte {
+			return []byte("<code>" + inlineCodeBlock.FindStringSubmatch(string(b))[2] + "</code>")
+		})
+		return string(out)
+	}
 
 	return "<p>" + text + "</p>"
 
-	/* // Same code as above, written as a switch statement, makes more sense to me personally
+	// Same code as above, written as a switch statement, makes more sense to me personally
+	/*
+		switch {
+		// We don't want to format inside of a codeblock, so return early
+		case codeBlockOpen && !fencedCodeBlock.MatchString(text):
+			if codeBlockAggregate != "" {
+				codeBlockAggregate += "<br>"
+			}
+			codeBlockAggregate += text
+			return ""
 
-	switch {
-	// We don't want to format inside of a codeblock, so return early
-	case codeBlockOpen && !fencedCodeBlock.MatchString(text):
-		if codeBlockAggregate != "" {
-			codeBlockAggregate += "<br>"
-		}
-		codeBlockAggregate += text
-		return ""
+		case markdownLinks.MatchString(text):
+			if strings.Contains(text, "audio/mpeg") {
+				return convertMarkdownEnclosure(text, markdownLinks)
+			} else {
+				return convertMarkdownLink(text, markdownLinks)
+			}
 
-	case markdownLinks.MatchString(text):
-		if strings.Contains(text, "audio/mpeg") {
-			return convertMarkdownEnclosure(text, markdownLinks)
-		} else {
-			return convertMarkdownLink(text, markdownLinks)
-		}
+		case markdownUnorderedLists.MatchString(text):
+			return convertMarkdownUlList(text)
 
-	case markdownUnorderedLists.MatchString(text):
-		return convertMarkdownUlList(text)
+		case markdownUlListActive:
+			markdownUlListActive = false
+			return "</ul><p>" + text + "</p>"
 
-	case markdownUlListActive:
-		markdownUlListActive = false
-		return "</ul><p>" + text + "</p>"
+		case markdownOrderedLists.MatchString(text):
+			entryIndex, entryErr := strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
+			entryText := markdownOrderedLists.FindStringSubmatch(text)[4]
+			if entryErr != nil {
+				return "<p>" + text + "</p>"
+			}
+			return convertMarkdownOlList(entryText, entryIndex)
 
-	case markdownOrderedLists.MatchString(text):
-		entryIndex, entryErr := strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
-		entryText := markdownOrderedLists.FindStringSubmatch(text)[4]
-		if entryErr != nil {
+		case markdownOlIndex != 0:
+			markdownOlIndex = 0
+			return "</ol>" + ConvertMarkdownToRSS(text)
+
+		case fencedCodeBlock.MatchString(text):
+			if !codeBlockOpen {
+				codeBlockOpen = true
+				codeBlockAggregate = "<sup>" + text[3:] + "</sup><br>"
+				return "" + "<pre style=\"word-wrap: break-word;\"><code>"
+			} else {
+				out := codeBlockAggregate
+				codeBlockAggregate, codeBlockOpen = "", false
+				return out + "</code></pre>"
+			}
+		case inlineCodeBlock.Match([]byte(text)):
+			out := inlineCodeBlock.ReplaceAllFunc([]byte(text), func(b []byte) []byte {
+				return []byte("<code>" + inlineCodeBlock.FindStringSubmatch(string(b))[2] + "</code>")
+			})
+			return string(out)
+
+		default:
 			return "<p>" + text + "</p>"
 		}
-		return convertMarkdownOlList(entryText, entryIndex)
-
-	case markdownOlIndex != 0:
-		markdownOlIndex = 0
-		return "</ol>" + ConvertMarkdownToRSS(text)
-
-	case fencedCodeBlock.MatchString(text):
-		if !codeBlockOpen {
-			codeBlockOpen = true
-			codeBlockAggregate = "<sup>" + text[3:] + "</sup><br>"
-			return "" + "<pre style=\"word-wrap: break-word;\"><code>"
-		} else {
-			out := codeBlockAggregate
-			codeBlockAggregate, codeBlockOpen = "", false
-			return out + "</code></pre>"
-		}
-
-	default:
-		return "<p>" + text + "</p>"
-	}
 	*/
 }
 

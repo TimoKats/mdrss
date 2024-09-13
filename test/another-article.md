@@ -36,6 +36,8 @@ fencedCodeBlock := regexp.MustCompile("^```")
 	  // Show off your tabwidth in style!
 ```
 
+This feature also works `inline` as well!
+
 And back to text again
 
 
