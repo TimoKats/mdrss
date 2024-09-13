@@ -1,15 +1,17 @@
 package lib
 
 import (
-  "unicode"
-  "strings"
-  "regexp"
-  "errors"
   "bufio"
+  "errors"
   "os"
+  "regexp"
+  "strconv"
+  "strings"
+  "unicode"
 )
 
-var markdownListActive bool
+var markdownUlListActive bool
+var markdownOlIndex int64
 
 func checkMarkdownTitle(text string) bool {
   if len(text) > 0 {
@@ -41,28 +43,48 @@ func convertMarkdownEnclosure(text string, markdownLinks *regexp.Regexp) string 
   return "<enclosure " + markdownLinks.ReplaceAllString(text, "url='$2' type='$1' length='") + size + "' />"
 }
 
-func convertMarkdownList(text string) string {
-  if !markdownListActive {
-    markdownListActive = true
+func convertMarkdownUlList(text string) string {
+  if !markdownUlListActive {
+    markdownUlListActive = true
     return "<ul><li>" + text[getLeadingWhitespace(text):] + "</li>"
+  }
+  return "<li>" + text[getLeadingWhitespace(text):] + "</li>"
+}
+
+func convertMarkdownOlList(text string, index int64) string {
+  if markdownOlIndex == 0 {
+    markdownOlIndex = 1
+    return "<ol><li>" + text[getLeadingWhitespace(text):] + "</li>"
   }
   return "<li>" + text[getLeadingWhitespace(text):] + "</li>"
 }
 
 func ConvertMarkdownToRSS(text string) string {
   markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
-  markdownLists := regexp.MustCompile(`^(\s*)(-|\*|\+)(.*)`)
+  markdownUnorderedLists := regexp.MustCompile(`^(\s*)(-|\*|\+)[\s](.*)`)
+  markdownOrderedLists := regexp.MustCompile(`^(\s*)(-?\d+)(\.\s+)(.*)$`)
   if markdownLinks.Match([]byte(text)) && strings.Contains(text, "audio/mpeg") {
     return convertMarkdownEnclosure(text, markdownLinks)
   }
   if markdownLinks.Match([]byte(text)) {
     return convertMarkdownLink(text, markdownLinks)
   }
-  if markdownLists.Match([]byte(text)) {
-    return convertMarkdownList(text)
-  } else if markdownListActive {
-    markdownListActive = false
+  if markdownUnorderedLists.Match([]byte(text)) {
+    return convertMarkdownUlList(text)
+  } else if markdownUlListActive {
+    markdownUlListActive = false
     return "</ul><p>" + text + "</p>"
+  }
+  if markdownOrderedLists.Match([]byte(text)) {
+    entryIndex, entryErr := strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
+    entryText := markdownOrderedLists.FindStringSubmatch(text)[4]
+    if entryErr != nil {
+      return "<p>" + text + "</p>"
+    }
+    return convertMarkdownOlList(entryText, entryIndex)
+  } else if markdownOlIndex != 0 {
+    markdownOlIndex = 0
+    return "</ol><p>" + text + "</p>"
   }
   return "<p>" + text + "</p>"
 }
@@ -75,7 +97,7 @@ func GetArticles(config Config) ([]Article, error) {
       if !file.IsDir() && !strings.HasPrefix(file.Name(), "draft-") && strings.HasSuffix(file.Name(), ".md") {
         var article Article
         fileInfo, _ := file.Info()
-        article.Filename = file.Name() 
+        article.Filename = file.Name()
         article.DatePublished = fileInfo.ModTime()
         articles = append(articles, article)
       }
@@ -87,8 +109,8 @@ func GetArticles(config Config) ([]Article, error) {
 
 func ReadMarkdown(config Config, articles []Article) []Article {
   for index := range articles {
-    markdownListActive = false
-    filePath := config.InputFolder + "/" + articles[index].Filename 
+    markdownUlListActive = false
+    filePath := config.InputFolder + "/" + articles[index].Filename
     readFile, _ := os.Open(filePath)
     scanner := bufio.NewScanner(readFile)
     for scanner.Scan() {
@@ -101,4 +123,3 @@ func ReadMarkdown(config Config, articles []Article) []Article {
   }
   return articles
 }
-

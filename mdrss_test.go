@@ -65,7 +65,7 @@ func TestConvertLinks(t *testing.T) {
 }
 
 func TestEnclosures(t *testing.T) {
-  got, fileSizeErr := mdrss.FileSizeUrl("https://file-examples.com/storage/fec2f2681466d1d67a0683d/2017/11/file_example_MP3_700KB.mp3")
+  got, fileSizeErr := mdrss.FileSizeUrl("https://file-examples.com/storage/fe74e638c366e3f719d5298/2017/11/file_example_MP3_700KB.mp3")
   want := "733645"
   if got != want {
     t.Errorf("got %v, wanted %v", got, want)
