@@ -56,12 +56,7 @@ func convertMarkdownOlList(text string, index int64) string {
     markdownOlIndex = 1
     return "<ol><li>" + text[getLeadingWhitespace(text):] + "</li>"
   }
-  var tagOpen = "<li>"
-  if markdownOlIndex+1 != index {
-    tagOpen = "<li value=\"" + strconv.FormatInt(index, 10) + "\">"
-  }
-  markdownOlIndex = index
-  return tagOpen + text[getLeadingWhitespace(text):] + "</li>"
+  return "<li>" + text[getLeadingWhitespace(text):] + "</li>"
 }
 
 func ConvertMarkdownToRSS(text string) string {
@@ -74,27 +69,23 @@ func ConvertMarkdownToRSS(text string) string {
   if markdownLinks.Match([]byte(text)) {
     return convertMarkdownLink(text, markdownLinks)
   }
-
   if markdownUnorderedLists.Match([]byte(text)) {
     return convertMarkdownUlList(text)
   } else if markdownUlListActive {
     markdownUlListActive = false
     return "</ul><p>" + text + "</p>"
   }
-
   if markdownOrderedLists.Match([]byte(text)) {
-    var entryIndex, err = strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
-    var entryText string = markdownOrderedLists.FindStringSubmatch(text)[4]
-    if err != nil {
-      // Should literally never happen unless ol index is > int64
-      panic(err)
+    entryIndex, entryErr := strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
+    entryText := markdownOrderedLists.FindStringSubmatch(text)[4]
+    if entryErr != nil {
+      return "<p>" + text + "</p>"
     }
     return convertMarkdownOlList(entryText, entryIndex)
   } else if markdownOlIndex != 0 {
     markdownOlIndex = 0
     return "</ol><p>" + text + "</p>"
   }
-
   return "<p>" + text + "</p>"
 }
 
