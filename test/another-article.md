@@ -25,9 +25,16 @@ And this is another (ordered) list:
 1. howdy
 2. 1 + 1 = ...
 4. out of order?
-5. back on track
-3. suprise!
--9. oh
+5. doesn't matter!
+
+Codeblocks:
+```go
+// The regex that captures this codeblock:
+fencedCodeBlock := regexp.MustCompile("^```")
+
+	// Code blocks keep original formatting, whitespace is important!
+	  // Show off your tabwidth in style!
+```
 
 And back to text again
 
