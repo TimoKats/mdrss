@@ -21,6 +21,14 @@ And this is a list:
 - hello again
 * other things
 
+And this is another (ordered) list:
+1. howdy
+2. 1 + 1 = ...
+4. out of order?
+5. back on track
+3. suprise!
+-9. oh
+
 And back to text again
 
 
