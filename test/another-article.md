@@ -25,9 +25,47 @@ And this is another (ordered) list:
 1. howdy
 2. 1 + 1 = ...
 4. out of order?
-5. back on track
-3. suprise!
--9. oh
+5. doesn't matter!
+
+Codeblocks:
+```go
+// The regex that captures this codeblock:
+fencedCodeBlock := regexp.MustCompile("^```")
+
+	// Code blocks keep original formatting, whitespace is important!
+	  // Show off your tabwidth in style!
+```
+
+```C++
+int main() {
+    int n, t1 = 0, t2 = 1, nextTerm = 0;
+
+    cout << "Enter the number of terms: ";
+    cin >> n;
+
+    cout << "Fibonacci Series: ";
+
+    for (int i = 1; i <= n; ++i) {
+        // Prints the first two terms.
+        if(i == 1) {
+            cout << t1 << ", ";
+            continue;
+        }
+        if(i == 2) {
+            cout << t2 << ", ";
+            continue;
+        }
+        nextTerm = t1 + t2;
+        t1 = t2;
+        t2 = nextTerm;
+        
+        cout << nextTerm << ", ";
+    }
+    return 0;
+```
+
+
+This feature also works `inline` as well!
 
 And back to text again
 
