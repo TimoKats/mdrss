@@ -110,11 +110,11 @@ func ConvertMarkdownToRSS(text string) string {
 			if len(text) > 3 {
 				codeBlockAggregate = "<sup>" + text[3:] + "</sup><br>"
 			}
-			return "" + "<pre><code>"
+			return "" + "<pre>"
 		} else {
 			out := codeBlockAggregate
 			codeBlockAggregate, codeBlockOpen = "", false
-			return out + "</code></pre>"
+			return out + "</pre>"
 		}
 	}
 	if inlineCodeBlock.Match([]byte(text)) {
