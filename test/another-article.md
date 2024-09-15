@@ -13,7 +13,14 @@ Timo
 
 And here goes some text...
 
-[link](https://timokats.xyz)
+**bold** text, __however you like it__.
+*italic* too? _Of course_!
+Sometimes ***strong emphasis*** is needed to get across a ___point___.
+~~You can always striketrough a bad idea~~,
+Make something unique with a ~subscript~,
+Or power up with a ^superscript^!
+
+A [link](https://timokats.xyz)
 
 And this is a list:
 - hello
@@ -68,5 +75,3 @@ int main() {
 This feature also works `inline` as well!
 
 And back to text again
-
-
