@@ -12,7 +12,8 @@ import (
 
 var markdownUlListActive bool
 var markdownOlIndex int64
-var codeBlockAggregate, codeBlockOpen = "", false
+var codeBlockActive = false
+var codeBlockAggregate = ""
 
 func checkMarkdownTitle(text string) bool {
   if len(text) > 0 {
@@ -30,6 +31,40 @@ func getLeadingWhitespace(text string) int {
   return 0
 }
 
+func parseLink(text string, markdownLinks *regexp.Regexp) string {
+  if strings.Contains(text, "audio/mpeg") {
+    return ConvertEnclosure(text, markdownLinks)
+  } else {
+    return ConvertLink(text, markdownLinks)
+  }
+}
+
+func parseCodeblock(text string) string {
+  if !codeBlockActive {
+    codeBlockActive = true
+    codeBlockAggregate = "<sup>" + text[3:] + "</sup><br>"
+    return "" + "<pre style=\"word-wrap: break-word;\"><code>"
+  } else {
+    out := codeBlockAggregate
+    codeBlockAggregate, codeBlockActive = "", false
+    return out + "</code></pre>"
+  }
+  if codeBlockAggregate != "" {
+    codeBlockAggregate += "<br>"
+  }
+  codeBlockAggregate += text
+  return ""
+}
+
+func parseOrderedLists(text string, markdownOrderedLists *regexp.Regexp) string {
+  entryIndex, entryErr := strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
+  entryText := markdownOrderedLists.FindStringSubmatch(text)[4]
+  if entryErr != nil {
+    return "<p>" + text + "</p>"
+  }
+  return ConvertOrderedlList(entryText, entryIndex)
+}
+
 func ConvertMarkdownToRSS(text string) string {
   markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
   markdownUnorderedLists := regexp.MustCompile(`^(\s*)(-|\*|\+)[\s](.*)`)
@@ -37,43 +72,23 @@ func ConvertMarkdownToRSS(text string) string {
   fencedCodeBlock := regexp.MustCompile("^\x60\x60\x60")
   text = ConvertTextEnrichment(text)
   switch {
-    case codeBlockOpen && !fencedCodeBlock.MatchString(text):
-      if codeBlockAggregate != "" {
-        codeBlockAggregate += "<br>"
-      }
-      codeBlockAggregate += text
-      return ""
+    // links 
     case markdownLinks.MatchString(text):
-      if strings.Contains(text, "audio/mpeg") {
-        return ConvertEnclosure(text, markdownLinks)
-      } else {
-        return ConvertLink(text, markdownLinks)
-      }
+      return parseLink(text, markdownLinks)
+    // lists
     case markdownUnorderedLists.MatchString(text):
       return ConvertUnorderedlList(text)
     case markdownUlListActive:
       markdownUlListActive = false
       return "</ul><p>" + text + "</p>"
     case markdownOrderedLists.MatchString(text):
-      entryIndex, entryErr := strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
-      entryText := markdownOrderedLists.FindStringSubmatch(text)[4]
-      if entryErr != nil {
-        return "<p>" + text + "</p>"
-      }
-      return ConvertOrderedlList(entryText, entryIndex)
+      return parseOrderedLists(text, markdownOrderedLists)
     case markdownOlIndex != 0:
       markdownOlIndex = 0
       return "</ol>" + ConvertMarkdownToRSS(text)
-    case fencedCodeBlock.MatchString(text):
-      if !codeBlockOpen {
-        codeBlockOpen = true
-        codeBlockAggregate = "<sup>" + text[3:] + "</sup><br>"
-        return "" + "<pre style=\"word-wrap: break-word;\"><code>"
-      } else {
-        out := codeBlockAggregate
-        codeBlockAggregate, codeBlockOpen = "", false
-        return out + "</code></pre>"
-      }
+    //code blocks
+    case fencedCodeBlock.MatchString(text) || codeBlockActive:
+      return parseCodeblock(text)
   default:
     return "<p>" + text + "</p>"
   }
@@ -117,7 +132,7 @@ func ReadMarkdown(config Config, articles []Article) []Article {
     for scanner.Scan() {
       if checkMarkdownTitle(scanner.Text()) && len(articles[index].Title) == 0 {
         articles[index].Title = scanner.Text()[2:len(scanner.Text())]
-      } else if len(scanner.Text()) > 0 || codeBlockOpen {
+      } else if len(scanner.Text()) > 0 || codeBlockActive {
         articles[index].Description += ConvertMarkdownToRSS(scanner.Text())
       }
     }
