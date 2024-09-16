@@ -43,6 +43,8 @@ fencedCodeBlock := regexp.MustCompile("^```")
 	  // Show off your tabwidth in style!
 ```
 
+Can I write text in between the code blocks?
+
 ```C++
 int main() {
     int n, t1 = 0, t2 = 1, nextTerm = 0;

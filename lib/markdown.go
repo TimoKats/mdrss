@@ -5,15 +5,9 @@ import (
   "bufio"
   "errors"
   "regexp"
-  "strconv"
   "strings"
   "unicode"
 )
-
-var markdownUlListActive bool
-var markdownOlIndex int64
-var codeBlockActive = false
-var codeBlockAggregate = ""
 
 func checkMarkdownTitle(text string) bool {
   if len(text) > 0 {
@@ -31,40 +25,6 @@ func getLeadingWhitespace(text string) int {
   return 0
 }
 
-func parseLink(text string, markdownLinks *regexp.Regexp) string {
-  if strings.Contains(text, "audio/mpeg") {
-    return ConvertEnclosure(text, markdownLinks)
-  } else {
-    return ConvertLink(text, markdownLinks)
-  }
-}
-
-func parseCodeblock(text string) string {
-  if !codeBlockActive {
-    codeBlockActive = true
-    codeBlockAggregate = "<sup>" + text[3:] + "</sup><br>"
-    return "" + "<pre style=\"word-wrap: break-word;\"><code>"
-  } else {
-    out := codeBlockAggregate
-    codeBlockAggregate, codeBlockActive = "", false
-    return out + "</code></pre>"
-  }
-  if codeBlockAggregate != "" {
-    codeBlockAggregate += "<br>"
-  }
-  codeBlockAggregate += text
-  return ""
-}
-
-func parseOrderedLists(text string, markdownOrderedLists *regexp.Regexp) string {
-  entryIndex, entryErr := strconv.ParseInt(markdownOrderedLists.FindStringSubmatch(text)[2], 10, 64)
-  entryText := markdownOrderedLists.FindStringSubmatch(text)[4]
-  if entryErr != nil {
-    return "<p>" + text + "</p>"
-  }
-  return ConvertOrderedlList(entryText, entryIndex)
-}
-
 func ConvertMarkdownToRSS(text string) string {
   markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
   markdownUnorderedLists := regexp.MustCompile(`^(\s*)(-|\*|\+)[\s](.*)`)
@@ -74,21 +34,15 @@ func ConvertMarkdownToRSS(text string) string {
   switch {
     // links 
     case markdownLinks.MatchString(text):
-      return parseLink(text, markdownLinks)
+      return ConvertLink(text, markdownLinks)
     // lists
-    case markdownUnorderedLists.MatchString(text):
-      return ConvertUnorderedlList(text)
-    case markdownUlListActive:
-      markdownUlListActive = false
-      return "</ul><p>" + text + "</p>"
-    case markdownOrderedLists.MatchString(text):
-      return parseOrderedLists(text, markdownOrderedLists)
-    case markdownOlIndex != 0:
-      markdownOlIndex = 0
-      return "</ol>" + ConvertMarkdownToRSS(text)
+    case markdownUnorderedLists.MatchString(text) || markdownUlListActive:
+      return ConvertUnorderedlList(text, markdownUnorderedLists)
+    case markdownOrderedLists.MatchString(text) || markdownOlIndex != 0:
+      return ConvertOrderedLists(text, markdownOrderedLists)
     //code blocks
     case fencedCodeBlock.MatchString(text) || codeBlockActive:
-      return parseCodeblock(text)
+      return ConvertCodeblock(text, fencedCodeBlock)
   default:
     return "<p>" + text + "</p>"
   }
