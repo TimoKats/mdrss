@@ -64,12 +64,13 @@ func promptUsr(prompt string, attrubute *string, fallback string) {
 }
 
 func initCommand() error {
-	configPath := mdrss.DefaultConfigPath()
+	var configPath string
 	var newConfig mdrss.Config
 	promptUsr("Feed title", &newConfig.Title, "Untitled")
 	promptUsr("Feed link", &newConfig.Link, "https://localhost:5500/index.xml")
 	promptUsr("Feed description", &newConfig.Description, "An RSS feed")
 	promptUsr("Feed author", &newConfig.Channel.Author, "anonymous")
+	promptUsr("Config path", &configPath, mdrss.DefaultConfigPath())
 	defaultDir, _ := os.Getwd()
 	promptUsr("Input folder path", &newConfig.InputFolder, defaultDir+"/test/")
 	promptUsr("Output file path", &newConfig.OutputFile, defaultDir+"/index.xml")
