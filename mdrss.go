@@ -55,7 +55,7 @@ func promptUsr(prompt string, attrubute *string, fallback string) {
 	var input string
 	in := bufio.NewReader(os.Stdin)
 	input, err := in.ReadString('\n')
-	input = strings.Replace(input, "\n", "", -1)
+	input = strings.TrimSpace(input)
 	if input == "" || err != nil {
 		*attrubute = fallback
 		return
@@ -90,9 +90,9 @@ func initCommand() error {
 	if jsonErr != nil {
 		mdrss.Error.Println("Critical failure in initialization of config")
 	}
-	configFile.Write(out)
+	_, writeErr := configFile.Write(out)
 	fmt.Println("\033[32m MDRSS Initialized! Run \"mdrss update\" to update your feed!")
-	return nil
+	return writeErr
 }
 
 func parseCommand(command string, config mdrss.Config) error {
@@ -111,7 +111,10 @@ func parseCommand(command string, config mdrss.Config) error {
 func main() {
 	arguments, argumentErr := mdrss.ParseArguments(os.Args)
 	if *arguments["command"] == "init" {
-		initCommand()
+		initErr := initCommand()
+		if initErr != nil {
+			mdrss.Error.Println(initErr)
+		}
 		return
 	}
 	config, configErr := mdrss.ReadConfig(*arguments["config"])
