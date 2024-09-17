@@ -3,16 +3,33 @@
 MDRSS is a markdown to RSS converter written in GO. With this tool, you can write articles in a local folder and have them automatically formatted to an RSS compliant XML file. As a result, you don't have to write articles on your website first and have them be read by an RSS reader. Moreover, MDRSS automatically takes care of publication dates, categories (next update), formatting, etc.
 
 ### Getting started
-You can install the binary using `go install github.com/TimoKats/mdrss@latest` (make sure your GOPATH is set correctly!). After this you can add your configuration in `~/.mdrss/config.json`. This is a JSON file with a number of settings. You can use this template to setup your configuration.
+You can install the binary using `go install github.com/TimoKats/mdrss@latest` (make sure your GOPATH is set correctly!). After this you can run `mdrss init`, which interactively prompts you for crucial information regarding your new feed. It also scaffolds most other optional elements from the RSS 2.0 Specification for high customizability, like a custom feed image!
 
 ```JSON
   {
-    "Author": "Timo Kats",
-    "Description": "Timo's weblog",
-    "InputFolder": "/path/to/articles/", # This will contain your markdown files
-    "OutputFile": "/path/to/webserver/index.xml",
-    "Link": "index.xml" # can be anything, might be deprecated
-  }
+    "InputFolder": "",
+    "OutputFile": "",
+    "Title": "Untitled",
+    "Link": "https://localhost:5500/index.xml",
+    "Description": "An RSS feed",
+    "Articles": null,
+    "Channel": {
+        "Author": "anonymous",
+        "Language": "",
+        "Copyright": "",
+        "ManagingEditor": "",
+        "WebMaster": "",
+        "Category": "",
+        "Generator": "",
+        "Docs": "",
+        "Cloud": "",
+        "Ttl": "",
+        "Image": "",
+        "Rating": "",
+        "SkipHours": "",
+        "SkipDays": ""
+    }
+}
 ```
 
 Note, the most recent update also allows users to specify their own config path, which you can define like so.
