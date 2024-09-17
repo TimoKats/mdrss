@@ -23,5 +23,5 @@ func ReadConfig(configPath string) (Config, error) {
 		}
 		return config, nil
 	}
-	return config, errors.New("Config file not found. Please add it at ~/.mdrss/config.json")
+	return config, errors.New("Config file not found. Please add it at ~/.mdrss/config.json or run \"mdrss init\"")
 }
