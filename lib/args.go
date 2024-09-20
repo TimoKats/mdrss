@@ -7,7 +7,7 @@ import (
 )
 
 func getCommand(arguments []string) (string, error) {
-  validCommands := []string{"update", "ls", "conf"}
+  validCommands := []string{"update", "ls", "conf", "init"}
   for _, validCommand := range validCommands {
     for _, argument := range arguments {
       if argument == validCommand {
@@ -18,7 +18,7 @@ func getCommand(arguments []string) (string, error) {
   return "", errors.New("No valid command found. Use mdrss <<ls, update, conf>>")
 }
 
-func defaultConfigPath() string {
+func DefaultConfigPath() string {
   dirname, _ := os.UserHomeDir()
   return dirname + "/.mdrss/config.json"
 }
@@ -26,7 +26,7 @@ func defaultConfigPath() string {
 func ParseArguments(arguments []string) (map[string]*string, error) {
   parsedArguments := make(map[string]*string)
   command, commandErr := getCommand(arguments)
-  parsedArguments["config"] = flag.String("config", defaultConfigPath(), "path to config.json")
+  parsedArguments["config"] = flag.String("config", DefaultConfigPath(), "path to config.json")
   parsedArguments["command"] = &command
   flag.Parse()
   return parsedArguments, commandErr
