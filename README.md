@@ -15,7 +15,7 @@ You can install the binary using `go install github.com/TimoKats/mdrss@latest` (
   }
 ```
 
-Note, since the last update (credit to @varphi-online) you can also run `mdrss init` to enter an interactive prompt that will fill in this config for you. Finally, you can also specify your own config path like so.
+Note, since the last update (credit to [@varphi-online](https://github.com/varphi-online)) you can also run `mdrss init` to enter an interactive prompt that will fill in this config for you. Finally, you can also specify your own config path like so.
 
 ```shell
 mdrss --config other/path/to/config update

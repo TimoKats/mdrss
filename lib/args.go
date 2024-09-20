@@ -15,7 +15,7 @@ func getCommand(arguments []string) (string, error) {
       }
     }
   }
-  return "", errors.New("No valid command found. Use mdrss <<ls, update, conf>>")
+  return "", errors.New("No valid command found. Use mdrss <<ls, update, conf, init>>")
 }
 
 func DefaultConfigPath() string {
