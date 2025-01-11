@@ -33,12 +33,12 @@ func ConvertMarkdownToRSS(text string) string {
   text = ConvertTextEnrichment(text)
   switch {
     // links 
-    case markdownLinks.MatchString(text):
+    case markdownLinks.MatchString(text) && !codeBlockActive:
       return ConvertLink(text, markdownLinks)
     // lists
-    case markdownUnorderedLists.MatchString(text) || markdownUlListActive:
+    case (markdownUnorderedLists.MatchString(text) || markdownUlListActive) && !codeBlockActive:
       return ConvertUnorderedlList(text, markdownUnorderedLists)
-    case markdownOrderedLists.MatchString(text) || markdownOlIndex != 0:
+    case (markdownOrderedLists.MatchString(text) || markdownOlIndex != 0) && !codeBlockActive:
       return ConvertOrderedLists(text, markdownOrderedLists)
     //code blocks
     case fencedCodeBlock.MatchString(text) || codeBlockActive:
