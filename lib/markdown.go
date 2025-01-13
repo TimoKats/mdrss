@@ -5,7 +5,6 @@ import (
   "bufio"
   "errors"
   "strings"
-  "unicode"
 
   "github.com/gomarkdown/markdown"
   "github.com/gomarkdown/markdown/html"
@@ -16,15 +15,6 @@ func checkMarkdownTitle(text string) bool {
     return string(text[0]) == string("#")
   }
   return false
-}
-
-func getLeadingWhitespace(text string) int {
-  for index, letter := range text {
-    if unicode.IsLetter(letter) {
-      return index
-    }
-  }
-  return 0
 }
 
 func ConvertMarkdownToXml(text []byte) string {
