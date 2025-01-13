@@ -26,9 +26,8 @@ func main() {
   config, configErr := mdrss.ReadConfig(*arguments["config"])
   mdrss.Info.Printf("Using config location: %v", *arguments["config"])
   if err := errors.Join(argumentErr, configErr); err != nil && *arguments["command"] != "init" {
-     mdrss.Error.Println(err)
-     return
-   }
+    mdrss.Error.Println(err); return
+  }
   commandErr := parseCommand(*arguments["command"], config)
   if commandErr != nil {
     mdrss.Error.Println(commandErr)
