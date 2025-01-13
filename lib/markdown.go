@@ -4,9 +4,11 @@ import (
   "os"
   "bufio"
   "errors"
-  "regexp"
   "strings"
   "unicode"
+
+  "github.com/gomarkdown/markdown"
+  "github.com/gomarkdown/markdown/html"
 )
 
 func checkMarkdownTitle(text string) bool {
@@ -25,38 +27,11 @@ func getLeadingWhitespace(text string) int {
   return 0
 }
 
-func ConvertMarkdownToRSS(text string) string {
-  markdownLinks := regexp.MustCompile(`\[(.*)\]\((.*)\)`)
-  markdownUnorderedLists := regexp.MustCompile(`^(\s*)(-|\*|\+)[\s](.*)`)
-  markdownOrderedLists := regexp.MustCompile(`^(\s*)(-?\d+)(\.\s+)(.*)$`)
-  fencedCodeBlock := regexp.MustCompile("^\x60\x60\x60")
-  text = ConvertTextEnrichment(text)
-  switch {
-    // links 
-    case markdownLinks.MatchString(text) && !codeBlockActive:
-      return ConvertLink(text, markdownLinks)
-    // lists
-    case (markdownUnorderedLists.MatchString(text) || markdownUlListActive) && !codeBlockActive:
-      return ConvertUnorderedlList(text, markdownUnorderedLists)
-    case (markdownOrderedLists.MatchString(text) || markdownOlIndex != 0) && !codeBlockActive:
-      return ConvertOrderedLists(text, markdownOrderedLists)
-    //code blocks
-    case fencedCodeBlock.MatchString(text) || codeBlockActive:
-      return ConvertCodeblock(text, fencedCodeBlock)
-  default:
-    return "<p>" + text + "</p>"
-  }
-}
-
-func inlineRewrap(text string, pattern *regexp.Regexp, prefix string, postfix string) string {
-  if pattern.Match([]byte(text)) {
-    out := pattern.ReplaceAllFunc([]byte(text), func(b []byte) []byte {
-      return []byte(prefix + pattern.FindStringSubmatch(string(b))[2] + postfix)
-    })
-    return string(out)
-  } else {
-    return text
-  }
+func ConvertMarkdownToXml(text []byte) string {
+  opts := html.RendererOptions{Flags: html.CommonFlags}
+  renderer := html.NewRenderer(opts)
+  html := markdown.ToHTML(text, nil, renderer)
+  return string(html)
 }
 
 func GetArticles(config Config) ([]Article, error) {
@@ -79,17 +54,20 @@ func GetArticles(config Config) ([]Article, error) {
 
 func ReadMarkdown(config Config, articles []Article) []Article {
   for index := range articles {
-    markdownUlListActive = false
+    articleBody := []byte("")
     filePath := config.InputFolder + "/" + articles[index].Filename
     readFile, _ := os.Open(filePath)
     scanner := bufio.NewScanner(readFile)
     for scanner.Scan() {
       if checkMarkdownTitle(scanner.Text()) && len(articles[index].Title) == 0 {
         articles[index].Title = scanner.Text()[2:len(scanner.Text())]
-      } else if len(scanner.Text()) > 0 || codeBlockActive {
-        articles[index].Description += ConvertMarkdownToRSS(scanner.Text())
+      } else {
+        articleBody = append(articleBody, scanner.Text()...)
+        articleBody = append(articleBody, "\n"...)
       }
+      articles[index].Description = ConvertMarkdownToXml(articleBody)
     }
+
   }
   return articles
 }

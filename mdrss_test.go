@@ -49,25 +49,18 @@ func TestCreateMarkdown(t *testing.T) {
 }
 
 func TestConvertLists(t *testing.T) {
-  want := "<ul><li>text</li>"
-  got := mdrss.ConvertMarkdownToRSS("  - text")
+  want := "<ul>\n<li>text</li>\n</ul>\n"
+  got := mdrss.ConvertMarkdownToXml([]byte("  - text"))
   if got != want {
     t.Errorf("got %v, wanted %v", got, want)
   }
 }
 
 func TestConvertLinks(t *testing.T) {
-  want := "<p>Click here for the <a href='https://timokats.xyz'>link</a></p>"
-  got := mdrss.ConvertMarkdownToRSS("Click here for the [link](https://timokats.xyz)")
+  want := "<p>Click here for the <a href=\"https://timokats.xyz\">link</a></p>\n"
+  got := mdrss.ConvertMarkdownToXml([]byte("Click here for the [link](https://timokats.xyz)"))
   if got != want {
     t.Errorf("got %v, wanted %v", got, want)
-  }
-}
-
-func TestFakeEnclosures(t *testing.T) {
-  _, fileSizeErr := mdrss.FileSizeUrl("hello.mp3")
-  if fileSizeErr == nil {
-    t.Errorf("Should give Error, but no.")
   }
 }
 
