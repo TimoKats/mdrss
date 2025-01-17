@@ -6,13 +6,14 @@ import (
 
 type Article struct {
   Id int
+  Guid string
   Title string
   Filename string
   Description string
   DatePublished time.Time
 }
 
-type Config struct {
+type Feed struct {
   Description string
   InputFolder string
   OutputFile string

@@ -6,14 +6,14 @@ import (
   "testing"
 )
 
-func testConfig() mdrss.Config {
-  var config mdrss.Config
-  config.Description = "Testing weblog"
-  config.InputFolder = "test/"
-  config.OutputFile = "rss.xml"
-  config.Author = "Testing Test"
-  config.Link = "test@testing.com"
-  return config
+func testFeed() mdrss.Feed {
+  var feed mdrss.Feed
+  feed.Description = "Testing weblog"
+  feed.InputFolder = "test/"
+  feed.OutputFile = "rss.xml"
+  feed.Author = "Testing Test"
+  feed.Link = "test@testing.com"
+  return feed
 }
 
 func TestFileExists(t *testing.T) {
@@ -25,8 +25,8 @@ func TestFileExists(t *testing.T) {
 }
 
 func TestGetArticles(t *testing.T) {
-  config := testConfig()
-  articles, _ := mdrss.GetArticles(config)
+  feed := testFeed()
+  articles, _ := mdrss.GetArticles(feed)
   got := []string{}
   want := []string{"another-article.md"}
   for _, article := range articles {
@@ -38,10 +38,10 @@ func TestGetArticles(t *testing.T) {
 }
 
 func TestCreateMarkdown(t *testing.T) {
-  config := testConfig()
-  files, _ := mdrss.GetArticles(config)
-  config.Articles = mdrss.ReadMarkdown(config, files)
-  got := config.Articles[0].Title
+  feed := testFeed()
+  files, _ := mdrss.GetArticles(feed)
+  feed.Articles = mdrss.ReadMarkdown(feed, files)
+  got := feed.Articles[0].Title
   want := "This article has a title." 
   if got != want {
     t.Errorf("got %v, wanted %v", got, want)
@@ -65,11 +65,11 @@ func TestConvertLinks(t *testing.T) {
 }
 
 func TestBasics(t *testing.T) {
-  config := testConfig()
-  articles, _ := mdrss.GetArticles(config)
-  config.Articles = mdrss.ReadMarkdown(config, articles)
-  rssXml := mdrss.CreateRSS(config)
-  rssErr := mdrss.WriteRSS(rssXml, config)
+  feed := testFeed()
+  articles, _ := mdrss.GetArticles(feed)
+  feed.Articles = mdrss.ReadMarkdown(feed, articles)
+  rssXml := mdrss.CreateRSS(feed)
+  rssErr := mdrss.WriteRSS(rssXml, feed)
   got := mdrss.FileExists("rss.xml")
   want := true
   if got != want || rssErr != nil {

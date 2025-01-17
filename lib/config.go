@@ -3,8 +3,35 @@ package lib
 import (
 	"encoding/json"
 	"errors"
+  "flag"
 	"os"
 )
+
+func getCommand(arguments []string) (string, error) {
+  validCommands := []string{"update", "ls", "conf", "init"}
+  for _, validCommand := range validCommands {
+    for _, argument := range arguments {
+      if argument == validCommand {
+        return validCommand, nil
+      }
+    }
+  }
+  return "", errors.New("No valid command found. Use mdrss <<ls, update, conf, init>>")
+}
+
+func DefaultConfigPath() string {
+  dirname, _ := os.UserHomeDir()
+  return dirname + "/.mdrss/config.json"
+}
+
+func ParseArguments(arguments []string) (map[string]*string, error) {
+  parsedArguments := make(map[string]*string)
+  command, commandErr := getCommand(arguments)
+  parsedArguments["config"] = flag.String("config", DefaultConfigPath(), "path to feed.json")
+  parsedArguments["command"] = &command
+  flag.Parse()
+  return parsedArguments, commandErr
+}
 
 func FileExists(filename string) bool {
   if _, err := os.Stat(filename); err != nil {
@@ -13,16 +40,16 @@ func FileExists(filename string) bool {
   return true
 }
 
-func ReadConfig(configPath string) (Config, error) {
-  var config Config
-  if FileExists(configPath) {
-    configContent, _ := os.ReadFile(configPath)
-    jsonErr := json.Unmarshal(configContent, &config)
+func ReadConfig(feedPath string) (Feed, error) {
+  var feed Feed
+  if FileExists(feedPath) {
+    feedContent, _ := os.ReadFile(feedPath)
+    jsonErr := json.Unmarshal(feedContent, &feed)
     if jsonErr != nil {
-      return config, errors.New("Error when reading config file.")
+      return feed, errors.New("Error when reading feed file.")
     }
-    return config, nil
+    return feed, nil
   }
-  return config, errors.New("Config file not found. Please add it at ~/.mdrss/config.json")
+  return feed, errors.New("Feed file not found. Please add it at ~/.mdrss/feed.json")
 }
 
