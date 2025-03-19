@@ -14,8 +14,6 @@ func parseCommand(command string, feed mdrss.Feed) error {
       return mdrss.ConfCommand(feed)
     case "update":
       return mdrss.UpdateCommand(feed)
-    case "init":
-      return mdrss.InitCommand()
     default:
       return errors.New("Command not found.")
   }
