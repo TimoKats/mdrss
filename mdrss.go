@@ -6,14 +6,14 @@ import (
   "os"
 )
 
-func parseCommand(command string, feed mdrss.Feed) error {
+func parseCommand(command string, config mdrss.Feed) error {
   switch (command) {
     case "ls":
-      return mdrss.LsCommand(feed)
+      return mdrss.LsCommand(config)
     case "conf":
-      return mdrss.ConfCommand(feed)
+      return mdrss.ConfCommand(config)
     case "update":
-      return mdrss.UpdateCommand(feed)
+      return mdrss.UpdateCommand(config)
     default:
       return errors.New("Command not found.")
   }
@@ -21,12 +21,12 @@ func parseCommand(command string, feed mdrss.Feed) error {
 
 func main() {
   arguments, argumentErr := mdrss.ParseArguments(os.Args)
-  feed, feedErr := mdrss.ReadConfig(*arguments["config"])
+  config, configErr := mdrss.ReadConfig(*arguments["config"])
   mdrss.Info.Printf("Using config location: %v", *arguments["config"])
-  if err := errors.Join(argumentErr, feedErr); err != nil && *arguments["command"] != "init" {
+  if err := errors.Join(argumentErr, configErr); err != nil && *arguments["command"] != "init" {
     mdrss.Error.Println(err); return
   }
-  commandErr := parseCommand(*arguments["command"], feed)
+  commandErr := parseCommand(*arguments["command"], config)
   if commandErr != nil {
     mdrss.Error.Println(commandErr)
   }
