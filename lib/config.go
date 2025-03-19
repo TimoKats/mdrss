@@ -21,7 +21,7 @@ func getCommand(arguments []string) (string, error) {
 
 func DefaultConfigPath() string {
   dirname, _ := os.UserHomeDir()
-  return dirname + "/.mdrss/config"
+  return dirname + "/.mdrss"
 }
 
 func ParseArguments(arguments []string) (map[string]*string, error) {

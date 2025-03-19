@@ -3,14 +3,14 @@
 MDRSS is a markdown to RSS converter written in GO. With this tool, you can write articles in a local folder and have them automatically formatted to an RSS compliant XML file. Moreover, MDRSS automatically takes care of publication dates, categories (next update), formatting, etc.
 
 ### Configuration
-You can install the binary using `go install github.com/TimoKats/mdrss@latest` (make sure your GOPATH is set correctly!). After this you can add your feeduration in `~/.mdrss/feed.json`. This is a file with a number of settings. You can use this template.
+You can install the binary using `go install github.com/TimoKats/mdrss@latest`. After this you can add your configuration in `~/.mdrss`. You can use this template.
 
 ```ini
 Author=Timo
-Description=Timo's weblog
-InputFolder=/path/to/articles/", # This will contain your markdown files
-OutputFile=/path/to/webserver/index.xml",
-Link=index.xml # can be anything, might be deprecated
+Description=Timo weblog
+InputFolder=/path/to/articles/ ; This will contain your markdown files
+OutputFile=/path/to/webserver/index.xml
+Link=index.xml ; can be anything, might be deprecated
 ```
 
 Note, you can also specify your own feed path like so: `mdrss --config other/path/to/config update`
