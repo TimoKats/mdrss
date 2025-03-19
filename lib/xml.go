@@ -41,7 +41,7 @@ func CreateRSS(feed Feed) string {
     }
   }
   xmlContent += "</channel>\n</rss>\n"
-  return xmlContent 
+  return xmlContent
 }
 
 func WriteRSS(rssContent string, feed Feed) error {

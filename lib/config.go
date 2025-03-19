@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"encoding/json"
+  "gopkg.in/ini.v1"
 	"errors"
   "flag"
 	"os"
@@ -21,13 +21,13 @@ func getCommand(arguments []string) (string, error) {
 
 func DefaultConfigPath() string {
   dirname, _ := os.UserHomeDir()
-  return dirname + "/.mdrss/config.json"
+  return dirname + "/.mdrss"
 }
 
 func ParseArguments(arguments []string) (map[string]*string, error) {
   parsedArguments := make(map[string]*string)
   command, commandErr := getCommand(arguments)
-  parsedArguments["config"] = flag.String("config", DefaultConfigPath(), "path to feed.json")
+  parsedArguments["config"] = flag.String("config", DefaultConfigPath(), "path to config")
   parsedArguments["command"] = &command
   flag.Parse()
   return parsedArguments, commandErr
@@ -40,16 +40,14 @@ func FileExists(filename string) bool {
   return true
 }
 
-func ReadConfig(feedPath string) (Feed, error) {
+func ReadConfig(filePath string) (Feed, error) {
   var feed Feed
-  if FileExists(feedPath) {
-    feedContent, _ := os.ReadFile(feedPath)
-    jsonErr := json.Unmarshal(feedContent, &feed)
-    if jsonErr != nil {
-      return feed, errors.New("Error when reading feed file.")
-    }
-    return feed, nil
+  if !FileExists(filePath) {
+    return feed, errors.New("Feed file not found. Please add it at ~/.mdrss")
   }
-  return feed, errors.New("Feed file not found. Please add it at ~/.mdrss/feed.json")
+  file, readErr := ini.Load(filePath)
+  if readErr != nil { return feed, readErr }
+  parseErr := file.MapTo(&feed)
+  return feed, parseErr
 }
 
