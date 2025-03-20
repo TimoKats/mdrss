@@ -52,7 +52,7 @@ func GetArticles(config Config) ([]Article, error) {
   return articles, fileErr
 }
 
-func parseMarkdown(config Config, articles []Article) []Article {
+func ParseMarkdown(config Config, articles []Article) []Article {
   for index := range articles {
     articleBody := []byte("")
     filePath := config.InputFolder + "/" + articles[index].Filename
@@ -74,7 +74,7 @@ func parseMarkdown(config Config, articles []Article) []Article {
 func (feed *Feed) FromConfig(config Config) error {
   feed.Conf = config
   articles, err := GetArticles(feed.Conf)
-  feed.Articles = parseMarkdown(feed.Conf, articles)
+  feed.Articles = ParseMarkdown(feed.Conf, articles)
   return err
 }
 
