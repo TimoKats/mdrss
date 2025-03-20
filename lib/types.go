@@ -13,14 +13,21 @@ type Article struct {
   DatePublished time.Time
 }
 
-type Feed struct {
+type Config struct {
   Description string
   InputFolder string
   OutputFile string
   Author string
   Link string
+}
 
-  // optional fields
+type Feed struct {
+  Conf Config
   Articles []Article
+}
+
+type Feeder interface {
+  FromConfig(Config) error
+  ToXML() error
 }
 
