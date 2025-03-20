@@ -1,10 +1,13 @@
+// Parses arguments, flags and returns a config object. ParseArguments and ReadConfig
+// are used by the main control flow.
+
 package lib
 
 import (
   "gopkg.in/ini.v1"
-	"errors"
+  "errors"
   "flag"
-	"os"
+  "os"
 )
 
 func getCommand(arguments []string) (string, error) {
@@ -19,35 +22,35 @@ func getCommand(arguments []string) (string, error) {
   return "", errors.New("No valid command found. Use mdrss <<ls, update, conf, init>>")
 }
 
-func DefaultConfigPath() string {
+func defaultConfigPath() string {
   dirname, _ := os.UserHomeDir()
   return dirname + "/.mdrss"
 }
 
-func ParseArguments(arguments []string) (map[string]*string, error) {
-  parsedArguments := make(map[string]*string)
-  command, commandErr := getCommand(arguments)
-  parsedArguments["config"] = flag.String("config", DefaultConfigPath(), "path to config")
-  parsedArguments["command"] = &command
-  flag.Parse()
-  return parsedArguments, commandErr
-}
-
-func FileExists(filename string) bool {
+func fileExists(filename string) bool {
   if _, err := os.Stat(filename); err != nil {
     return false
   }
   return true
 }
 
-func ReadConfig(filePath string) (Feed, error) {
-  var feed Feed
-  if !FileExists(filePath) {
-    return feed, errors.New("Feed file not found. Please add it at ~/.mdrss")
+func ParseArguments(arguments []string) (map[string]*string, error) {
+  parsedArguments := make(map[string]*string)
+  command, commandErr := getCommand(arguments)
+  parsedArguments["config"] = flag.String("config", defaultConfigPath(), "path to config")
+  parsedArguments["command"] = &command
+  flag.Parse()
+  return parsedArguments, commandErr
+}
+
+func ReadConfig(filePath string) (Config, error) {
+  var config Config
+  if !fileExists(filePath) {
+    return config, errors.New("Feed file not found. Please add it at ~/.mdrss")
   }
-  file, readErr := ini.Load(filePath)
-  if readErr != nil { return feed, readErr }
-  parseErr := file.MapTo(&feed)
-  return feed, parseErr
+  fileContent, readErr := ini.Load(filePath)
+  if readErr != nil { return config, readErr }
+  parseErr := fileContent.MapTo(&config)
+  return config, parseErr
 }
 

@@ -1,3 +1,5 @@
+// logging class, created upon init.
+
 package lib
 
 import (

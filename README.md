@@ -13,8 +13,10 @@ OutputFile=/path/to/webserver/index.xml
 Link=index.xml ; can be anything, might be deprecated
 ```
 
-Note, you can also specify your own feed path like so: `mdrss --config other/path/to/config update`
+Note, you can also specify your own config path like so: `mdrss --config other/path/to/config update`
 
 ### Publication
-In your input folder, you can add an article by creating a `.md` file. **Note, if your filename is prefixed with `draft-` it will not be included in the RSS file**. Finally, you can type `mdrss ls` to view the articles ready for publishing and `mdrss update` to create the RSS feed. Note, the title of the RSS articles are based on markdown headers. E.g. format the first line of the markdown articles as so: `# this is a title`.
+In your input folder, you can add an article by creating a `.md` file. **Note, if your filename is prefixed with `draft-` it will not be included in the RSS file**.  
+
+Finally, you can type `mdrss ls` to view the articles ready for publishing and `mdrss update` to create the RSS feed. Note, the title of the RSS articles are based on markdown headers. E.g. format the first line of the markdown articles as so: `# this is a title`.
 

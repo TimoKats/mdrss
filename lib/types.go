@@ -1,3 +1,6 @@
+// Types/Interfaces for creating feeds. A feed consists of a config and list of articles.
+// The interface has two functions, from markdown, to XML (which makes sense...).
+
 package lib
 
 import (
@@ -13,14 +16,21 @@ type Article struct {
   DatePublished time.Time
 }
 
-type Feed struct {
+type Config struct {
   Description string
   InputFolder string
   OutputFile string
   Author string
   Link string
+}
 
-  // optional fields
+type Feed struct {
+  Conf Config
   Articles []Article
+}
+
+type Feeder interface {
+  FromConfig(Config) error
+  ToXML() error
 }
 

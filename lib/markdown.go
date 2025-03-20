@@ -1,10 +1,11 @@
+// Module responsible for reading markdown files and converting it to valid HTML.
+
 package lib
 
 import (
   "os"
   "io/fs"
   "bufio"
-  "errors"
   "strings"
 
   "github.com/gomarkdown/markdown"
@@ -34,8 +35,8 @@ func ConvertMarkdownToXml(text []byte) string {
   return string(html)
 }
 
-func GetArticles(feed Feed) ([]Article, error) {
-  RawArticles, fileErr := os.ReadDir(feed.InputFolder)
+func GetArticles(config Config) ([]Article, error) {
+  RawArticles, fileErr := os.ReadDir(config.InputFolder)
   articles := []Article{}
   if fileErr == nil {
     for _, file := range RawArticles {
@@ -44,19 +45,19 @@ func GetArticles(feed Feed) ([]Article, error) {
         fileInfo, _ := file.Info()
         article.Filename = file.Name()
         article.DatePublished = fileInfo.ModTime()
-        article.Guid = feed.Link + "/" + formatGuid(file)
+        article.Guid = config.Link + "/" + formatGuid(file)
         articles = append(articles, article)
       }
     }
     return articles, nil
   }
-  return articles, errors.New("Error when getting files from input directory.")
+  return articles, fileErr
 }
 
-func ReadMarkdown(feed Feed, articles []Article) []Article {
+func ParseMarkdown(config Config, articles []Article) []Article {
   for index := range articles {
     articleBody := []byte("")
-    filePath := feed.InputFolder + "/" + articles[index].Filename
+    filePath := config.InputFolder + "/" + articles[index].Filename
     readFile, _ := os.Open(filePath)
     scanner := bufio.NewScanner(readFile)
     for scanner.Scan() {
@@ -68,7 +69,14 @@ func ReadMarkdown(feed Feed, articles []Article) []Article {
       }
       articles[index].Description = ConvertMarkdownToXml(articleBody)
     }
-
   }
   return articles
 }
+
+func (feed *Feed) FromConfig(config Config) error {
+  feed.Conf = config
+  articles, err := GetArticles(feed.Conf)
+  feed.Articles = ParseMarkdown(feed.Conf, articles)
+  return err
+}
+
