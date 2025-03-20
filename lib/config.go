@@ -1,3 +1,6 @@
+// Parses arguments, flags and returns a config object. ParseArguments and ReadConfig
+// are used by the main control flow.
+
 package lib
 
 import (

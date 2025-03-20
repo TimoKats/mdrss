@@ -1,3 +1,5 @@
+// Module responsible for reading markdown files and converting it to valid HTML.
+
 package lib
 
 import (

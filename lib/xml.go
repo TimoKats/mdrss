@@ -1,3 +1,5 @@
+// Module responsible for writing RSS compliant XML based on a feed objcet.
+
 package lib
 
 import (

@@ -1,3 +1,5 @@
+// unit tests. Fairly minimal, only important stuff.
+
 package main
 
 import (

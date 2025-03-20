@@ -1,3 +1,6 @@
+// Types/Interfaces for creating feeds. A feed consists of a config and list of articles.
+// The interface has two functions, from markdown, to XML (which makes sense...).
+
 package lib
 
 import (
