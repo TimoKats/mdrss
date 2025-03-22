@@ -7,10 +7,20 @@ import (
   "io/fs"
   "bufio"
   "strings"
+  "path/filepath"
 
   "github.com/gomarkdown/markdown"
   "github.com/gomarkdown/markdown/html"
 )
+
+func getLastFolder(path string) string {
+	cleanedPath := filepath.Clean(path)
+	parts := strings.Split(cleanedPath, string(filepath.Separator))
+	if len(parts) == 0 {
+		Error.Println("No folder found."); return ""
+	}
+	return parts[len(parts)-1]
+}
 
 func formatGuid(file fs.DirEntry) string {
   filename := strings.Split(file.Name(), ".")[0]
@@ -28,55 +38,62 @@ func checkMarkdownTitle(text string) bool {
   return false
 }
 
-func ConvertMarkdownToXml(text []byte) string {
+func convertMarkdownToXml(text []byte) string {
   opts := html.RendererOptions{Flags: html.CommonFlags}
   renderer := html.NewRenderer(opts)
   html := markdown.ToHTML(text, nil, renderer)
   return string(html)
 }
 
-func GetArticles(config Config) ([]Article, error) {
-  RawArticles, fileErr := os.ReadDir(config.InputFolder)
-  articles := []Article{}
-  if fileErr == nil {
-    for _, file := range RawArticles {
-      if !file.IsDir() && validFilename(file) {
-        var article Article
-        fileInfo, _ := file.Info()
-        article.Filename = file.Name()
-        article.DatePublished = fileInfo.ModTime()
-        article.Guid = config.Link + "/" + formatGuid(file)
-        articles = append(articles, article)
-      }
+func parseMarkdown(article Article, config Config) Article {
+  articleBody := []byte("")
+  filePath := config.InputFolder + "/" + article.Topic + "/" + article.Filename
+  readFile, _ := os.Open(filePath)
+  scanner := bufio.NewScanner(readFile)
+  for scanner.Scan() {
+    if checkMarkdownTitle(scanner.Text()) && len(article.Title) == 0 {
+      article.Title = scanner.Text()[2:len(scanner.Text())]
+    } else {
+      articleBody = append(articleBody, scanner.Text()...)
+      articleBody = append(articleBody, "\n"...)
     }
-    return articles, nil
+    article.Description = convertMarkdownToXml(articleBody)
   }
-  return articles, fileErr
+  return article
 }
 
-func ParseMarkdown(config Config, articles []Article) []Article {
-  for index := range articles {
-    articleBody := []byte("")
-    filePath := config.InputFolder + "/" + articles[index].Filename
-    readFile, _ := os.Open(filePath)
-    scanner := bufio.NewScanner(readFile)
-    for scanner.Scan() {
-      if checkMarkdownTitle(scanner.Text()) && len(articles[index].Title) == 0 {
-        articles[index].Title = scanner.Text()[2:len(scanner.Text())]
-      } else {
-        articleBody = append(articleBody, scanner.Text()...)
-        articleBody = append(articleBody, "\n"...)
-      }
-      articles[index].Description = ConvertMarkdownToXml(articleBody)
+func newArticle(file fs.DirEntry, config Config) Article {
+  fileInfo, _ := file.Info()
+  article := Article{
+    Filename: file.Name(),
+    DatePublished: fileInfo.ModTime(),
+    Guid: config.Link + "/" + formatGuid(file),
+  }
+  if len(config.topicInputFolder) > 0 {
+    article.Topic = getLastFolder(config.topicInputFolder)
+  }
+  return parseMarkdown(article, config)
+}
+
+func (feed *Feed) getArticles() error {
+  rawArticles, err := os.ReadDir(feed.config.InputFolder)
+  if len(feed.config.topicInputFolder) > 0 {
+    rawArticles, err = os.ReadDir(feed.config.topicInputFolder)
+  }
+  if err != nil { return err }
+  for _, file := range rawArticles {
+    if file.IsDir() {
+      feed.config.topicInputFolder = feed.config.InputFolder + "/" + file.Name()
+      feed.getArticles()
+    } else if !file.IsDir() && validFilename(file) {
+      feed.Articles = append(feed.Articles, newArticle(file, feed.config))
     }
   }
-  return articles
+  return nil
 }
 
 func (feed *Feed) FromConfig(config Config) error {
-  feed.Conf = config
-  articles, err := GetArticles(feed.Conf)
-  feed.Articles = ParseMarkdown(feed.Conf, articles)
-  return err
+  feed.config = config
+  return feed.getArticles()
 }
 

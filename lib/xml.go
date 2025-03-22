@@ -33,10 +33,10 @@ func addHeader(config Config) string {
 }
 
 func (feed *Feed) ToXML() error {
-  xmlContent := addHeader(feed.Conf)
+  xmlContent := addHeader(feed.config)
   for _, article := range feed.Articles {
     if len(article.Title) != 0 {
-      xmlContent = addItem(xmlContent, feed.Conf, article)
+      xmlContent = addItem(xmlContent, feed.config, article)
       Info.Printf("Added '%s' to RSS config. ", article.Title)
     } else {
       Warn.Printf("%s doesn't have a valid markdown title.", article.Filename)
@@ -44,6 +44,6 @@ func (feed *Feed) ToXML() error {
   }
   xmlContent += "</channel>\n</rss>\n"
   rssByte := []byte(xmlContent)
-  return os.WriteFile(feed.Conf.OutputFile, rssByte, 0644)
+  return os.WriteFile(feed.config.OutputFile, rssByte, 0644)
 }
 

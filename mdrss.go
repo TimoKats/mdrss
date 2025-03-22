@@ -10,13 +10,13 @@ import (
 )
 
 func ls(config mdrss.Config) error {
-  files, fileErr := mdrss.GetArticles(config)
-  if fileErr == nil {
-    for _, file := range files {
-      mdrss.Info.Println(file)
-    }
+  var feed mdrss.Feed
+  err := feed.FromConfig(config)
+  if err != nil { return err }
+  for _, article := range feed.Articles {
+    mdrss.Info.Printf("%s/%s", article.Topic, article.Filename)
   }
-  return fileErr
+  return err
 }
 
 func update(config mdrss.Config) error {
@@ -25,7 +25,7 @@ func update(config mdrss.Config) error {
   if markdownErr != nil { return markdownErr }
   rssErr := feed.ToXML()
   if rssErr != nil { return rssErr }
-  mdrss.Info.Printf("Content written to %s", feed.Conf.OutputFile)
+  mdrss.Info.Printf("Content written to %s", config.OutputFile)
   return nil
 }
 

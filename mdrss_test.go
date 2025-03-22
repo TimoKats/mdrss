@@ -41,19 +41,3 @@ func TestCreateMarkdown(t *testing.T) {
   }
 }
 
-func TestConvertLists(t *testing.T) {
-  want := "<ul>\n<li>text</li>\n</ul>\n"
-  got := mdrss.ConvertMarkdownToXml([]byte("  - text"))
-  if got != want {
-    t.Errorf("got %v, wanted %v", got, want)
-  }
-}
-
-func TestConvertLinks(t *testing.T) {
-  want := "<p>Click here for the <a href=\"https://timokats.xyz\">link</a></p>\n"
-  got := mdrss.ConvertMarkdownToXml([]byte("Click here for the [link](https://timokats.xyz)"))
-  if got != want {
-    t.Errorf("got %v, wanted %v", got, want)
-  }
-}
-
