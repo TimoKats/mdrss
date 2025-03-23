@@ -1,10 +1,8 @@
-// Parses arguments, flags and returns a config object. ParseArguments and ReadConfig
-// are used by the main control flow.
+// Parses the flags/commands that are passed when invoking mdrss.
 
 package lib
 
 import (
-  "gopkg.in/ini.v1"
   "errors"
   "flag"
   "os"
@@ -27,13 +25,6 @@ func defaultConfigPath() string {
   return dirname + "/.mdrss"
 }
 
-func fileExists(filename string) bool {
-  if _, err := os.Stat(filename); err != nil {
-    return false
-  }
-  return true
-}
-
 func ParseArguments(arguments []string) (map[string]*string, error) {
   parsedArguments := make(map[string]*string)
   command, commandErr := getCommand(arguments)
@@ -42,15 +33,3 @@ func ParseArguments(arguments []string) (map[string]*string, error) {
   flag.Parse()
   return parsedArguments, commandErr
 }
-
-func ReadConfig(filePath string) (Config, error) {
-  var config Config
-  if !fileExists(filePath) {
-    return config, errors.New("Feed file not found. Please add it at ~/.mdrss")
-  }
-  fileContent, readErr := ini.Load(filePath)
-  if readErr != nil { return config, readErr }
-  parseErr := fileContent.MapTo(&config)
-  return config, parseErr
-}
-

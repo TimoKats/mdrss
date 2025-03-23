@@ -4,19 +4,19 @@
 package main
 
 import (
-  mdrss "github.com/TimoKats/mdrss/lib"
+  mdrss "github.com/TimoKats/mdrss/pkg"
   "errors"
   "os"
 )
 
 func ls(config mdrss.Config) error {
-  files, fileErr := mdrss.GetArticles(config)
-  if fileErr == nil {
-    for _, file := range files {
-      mdrss.Info.Println(file)
-    }
+  var feed mdrss.Feed
+  err := feed.FromConfig(config)
+  if err != nil { return err }
+  for _, article := range feed.Articles {
+    mdrss.Info.Printf("%s/%s", article.Topic, article.Filename)
   }
-  return fileErr
+  return err
 }
 
 func update(config mdrss.Config) error {
@@ -24,9 +24,7 @@ func update(config mdrss.Config) error {
   markdownErr := feed.FromConfig(config)
   if markdownErr != nil { return markdownErr }
   rssErr := feed.ToXML()
-  if rssErr != nil { return rssErr }
-  mdrss.Info.Printf("Content written to %s", feed.Conf.OutputFile)
-  return nil
+  return rssErr
 }
 
 func parse(command string, config mdrss.Config) error {
