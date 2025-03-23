@@ -60,7 +60,7 @@ func (feed *Feed) getArticles() error {
   for _, file := range rawArticles {
     if file.IsDir() {
       feed.config.topicInputFolder = feed.config.InputFolder + "/" + file.Name()
-      feed.getArticles()
+      feed.getArticles() //nolint:all
     } else if !file.IsDir() && validFilename(file) {
       feed.Articles = append(feed.Articles, newArticle(file, feed.config))
     }
