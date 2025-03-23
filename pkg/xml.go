@@ -16,7 +16,7 @@ func addItem(xmlContent string, config Config, article Article) string {
   xmlContent += "\t\t<link>" + config.Link + "</link>\n"
   xmlContent += "\t\t<pubDate>" + timestamp + "</pubDate>\n"
   xmlContent += "\t\t<guid>" + article.Guid + "</guid>\n"
-  if len(article.Topic) > 0 {
+  if isSet(article.Topic) {
     xmlContent += "\t\t<category>" + article.Topic + "</category>\n"
   }
   xmlContent += "\t\t<description><![CDATA[" + article.Description + "]]></description>\n"
@@ -42,7 +42,7 @@ func createXMLByteString(articles []Article, config Config) []byte {
   for _, article := range articles {
     if len(article.Title) != 0 {
       xmlContent = addItem(xmlContent, config, article)
-      Info.Printf("Added '%s' to RSS config. ", article.Title)
+      Info.Printf("Added '%s' to RSS feed. ", article.Title)
     } else {
       Warn.Printf("%s doesn't have a valid markdown title.", article.Filename)
     }
@@ -55,8 +55,12 @@ func mapTopicToFile(feed *Feed) map[string][]Article {
   fileMap := make(map[string][]Article)
   for _, article := range feed.Articles {
     _, ok := fileMap[article.Topic]
-    if ok {
-      fileMap[article.Topic] = []Article{article}
+    if !ok {
+      if !isSet(article.Topic) {
+        fileMap["index"] = []Article{article}
+      } else {
+        fileMap[article.Topic] = []Article{article}
+      }
     } else {
       fileMap[article.Topic] = append(fileMap[article.Topic], article)
     }
@@ -65,16 +69,18 @@ func mapTopicToFile(feed *Feed) map[string][]Article {
 }
 
 func (feed *Feed) ToXML() error {
-  if len(feed.config.OutputFolder) > 0 {
+  if isSet(feed.config.OutputFolder) {
     fileMap := mapTopicToFile(feed)
     for filename, articles := range fileMap {
       rssByte := createXMLByteString(articles, feed.config)
       filepath := feed.config.OutputFolder + "/" + filename + ".xml"
-      fileErr := os.WriteFile(filepath, rssByte, 0644) // toFileName
+      fileErr := os.WriteFile(filepath, rssByte, 0644)
       if fileErr != nil { return fileErr }
+      Info.Printf("Content written to %s", filepath)
     }
   } else {
     rssByte := createXMLByteString(feed.Articles, feed.config)
+    Info.Printf("Content written to %s", feed.config.OutputFile)
     return os.WriteFile(feed.config.OutputFile, rssByte, 0644)
   }
   return nil

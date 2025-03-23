@@ -1,7 +1,7 @@
 // Module responsible for reading markdown files and converting it to valid HTML.
-// FromConfig is called by the main control flow. It adds the config first and then the
-// articles using a (semi) recursive function. Remaining functions are helpers for conv-
-// erting markdown to HMTL, etc.
+// FromConfig is called by the main control flow. It adds the config first and then
+// the articles using a (semi) recursive function. Remaining functions are helpers
+// for converting markdown to HMTL, etc.
 
 package lib
 
@@ -9,37 +9,10 @@ import (
   "os"
   "io/fs"
   "bufio"
-  "strings"
-  "path/filepath"
 
   "github.com/gomarkdown/markdown"
   "github.com/gomarkdown/markdown/html"
 )
-
-func getLastFolder(path string) string {
-  cleanedPath := filepath.Clean(path)
-  parts := strings.Split(cleanedPath, string(filepath.Separator))
-  if len(parts) == 0 {
-    Error.Println("No folder found."); return ""
-  }
-  return parts[len(parts)-1]
-}
-
-func formatGuid(file fs.DirEntry) string {
-  filename := strings.Split(file.Name(), ".")[0]
-  return strings.ReplaceAll(filename, " ", "-")
-}
-
-func validFilename(file fs.DirEntry) bool {
-  return !strings.HasPrefix(file.Name(), "draft-") && strings.HasSuffix(file.Name(), ".md")
-}
-
-func checkMarkdownTitle(text string) bool {
-  if len(text) > 0 {
-    return string(text[0]) == string("#")
-  }
-  return false
-}
 
 func convertMarkdownToXml(text []byte) string {
   opts := html.RendererOptions{Flags: html.CommonFlags}
@@ -72,7 +45,7 @@ func newArticle(file fs.DirEntry, config Config) Article {
     DatePublished: fileInfo.ModTime(),
     Guid: config.Link + "/" + formatGuid(file),
   }
-  if len(config.topicInputFolder) > 0 {
+  if isSet(config.topicInputFolder) {
     article.Topic = getLastFolder(config.topicInputFolder)
   }
   return parseMarkdown(article, config)
@@ -80,7 +53,7 @@ func newArticle(file fs.DirEntry, config Config) Article {
 
 func (feed *Feed) getArticles() error {
   rawArticles, err := os.ReadDir(feed.config.InputFolder)
-  if len(feed.config.topicInputFolder) > 0 {
+  if isSet(feed.config.topicInputFolder) {
     rawArticles, err = os.ReadDir(feed.config.topicInputFolder)
   }
   if err != nil { return err }

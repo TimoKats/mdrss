@@ -4,7 +4,7 @@
 package main
 
 import (
-  mdrss "github.com/TimoKats/mdrss/lib"
+  mdrss "github.com/TimoKats/mdrss/pkg"
   "errors"
   "os"
 )
@@ -24,9 +24,7 @@ func update(config mdrss.Config) error {
   markdownErr := feed.FromConfig(config)
   if markdownErr != nil { return markdownErr }
   rssErr := feed.ToXML()
-  if rssErr != nil { return rssErr }
-  mdrss.Info.Printf("Content written to %s", config.OutputFile)
-  return nil
+  return rssErr
 }
 
 func parse(command string, config mdrss.Config) error {

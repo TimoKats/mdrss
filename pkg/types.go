@@ -40,6 +40,10 @@ type Feed struct {
   config Config
 }
 
+type Configer interface {
+  valid() bool
+}
+
 type Feeder interface {
   FromConfig(Config) error
   ToXML() error
