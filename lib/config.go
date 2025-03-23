@@ -34,6 +34,10 @@ func fileExists(filename string) bool {
   return true
 }
 
+func (config Config) valid() bool { // to utils
+  return len(config.OutputFolder) > 0  || len(config.OutputFile) > 0
+}
+
 func ParseArguments(arguments []string) (map[string]*string, error) {
   parsedArguments := make(map[string]*string)
   command, commandErr := getCommand(arguments)
@@ -51,6 +55,9 @@ func ReadConfig(filePath string) (Config, error) {
   fileContent, readErr := ini.Load(filePath)
   if readErr != nil { return config, readErr }
   parseErr := fileContent.MapTo(&config)
+  if parseErr == nil && !config.valid() {
+    parseErr = errors.New("Please set OutputFile or OutputFolder in config.")
+  }
   return config, parseErr
 }
 

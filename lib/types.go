@@ -22,9 +22,12 @@ type Article struct {
 type Config struct {
   Description string
   InputFolder string
-  OutputFile string
   Author string
   Link string
+
+  // optional (one is required)
+  OutputFolder string
+  OutputFile string
 
   // private
   topicInputFolder string

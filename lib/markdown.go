@@ -1,4 +1,7 @@
 // Module responsible for reading markdown files and converting it to valid HTML.
+// FromConfig is called by the main control flow. It adds the config first and then the
+// articles using a (semi) recursive function. Remaining functions are helpers for conv-
+// erting markdown to HMTL, etc.
 
 package lib
 
@@ -14,12 +17,12 @@ import (
 )
 
 func getLastFolder(path string) string {
-	cleanedPath := filepath.Clean(path)
-	parts := strings.Split(cleanedPath, string(filepath.Separator))
-	if len(parts) == 0 {
-		Error.Println("No folder found."); return ""
-	}
-	return parts[len(parts)-1]
+  cleanedPath := filepath.Clean(path)
+  parts := strings.Split(cleanedPath, string(filepath.Separator))
+  if len(parts) == 0 {
+    Error.Println("No folder found."); return ""
+  }
+  return parts[len(parts)-1]
 }
 
 func formatGuid(file fs.DirEntry) string {

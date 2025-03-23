@@ -1,4 +1,6 @@
-// Module responsible for writing RSS compliant XML based on a feed objcet.
+// Module responsible for writing RSS compliant XML based on a feed objet. ToXML function
+// is called by the main control flow with a Feed object. The remaining functions add
+// the header and item strings and write the XML to the file system.
 
 package lib
 
@@ -14,6 +16,9 @@ func addItem(xmlContent string, config Config, article Article) string {
   xmlContent += "\t\t<link>" + config.Link + "</link>\n"
   xmlContent += "\t\t<pubDate>" + timestamp + "</pubDate>\n"
   xmlContent += "\t\t<guid>" + article.Guid + "</guid>\n"
+  if len(article.Topic) > 0 {
+    xmlContent += "\t\t<category>" + article.Topic + "</category>\n"
+  }
   xmlContent += "\t\t<description><![CDATA[" + article.Description + "]]></description>\n"
   xmlContent += "\t</item>\n"
   return xmlContent
@@ -32,18 +37,46 @@ func addHeader(config Config) string {
   return xmlContent
 }
 
-func (feed *Feed) ToXML() error {
-  xmlContent := addHeader(feed.config)
-  for _, article := range feed.Articles {
+func createXMLByteString(articles []Article, config Config) []byte {
+  xmlContent := addHeader(config)
+  for _, article := range articles {
     if len(article.Title) != 0 {
-      xmlContent = addItem(xmlContent, feed.config, article)
+      xmlContent = addItem(xmlContent, config, article)
       Info.Printf("Added '%s' to RSS config. ", article.Title)
     } else {
       Warn.Printf("%s doesn't have a valid markdown title.", article.Filename)
     }
   }
   xmlContent += "</channel>\n</rss>\n"
-  rssByte := []byte(xmlContent)
-  return os.WriteFile(feed.config.OutputFile, rssByte, 0644)
+  return []byte(xmlContent)
+}
+
+func mapTopicToFile(feed *Feed) map[string][]Article {
+  fileMap := make(map[string][]Article)
+  for _, article := range feed.Articles {
+    _, ok := fileMap[article.Topic]
+    if ok {
+      fileMap[article.Topic] = []Article{article}
+    } else {
+      fileMap[article.Topic] = append(fileMap[article.Topic], article)
+    }
+  }
+  return fileMap
+}
+
+func (feed *Feed) ToXML() error {
+  if len(feed.config.OutputFolder) > 0 {
+    fileMap := mapTopicToFile(feed)
+    for filename, articles := range fileMap {
+      rssByte := createXMLByteString(articles, feed.config)
+      filepath := feed.config.OutputFolder + "/" + filename + ".xml"
+      fileErr := os.WriteFile(filepath, rssByte, 0644) // toFileName
+      if fileErr != nil { return fileErr }
+    }
+  } else {
+    rssByte := createXMLByteString(feed.Articles, feed.config)
+    return os.WriteFile(feed.config.OutputFile, rssByte, 0644)
+  }
+  return nil
 }
 
