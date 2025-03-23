@@ -1,3 +1,5 @@
+// Submodule for reading config file and using the config object.
+
 package lib
 
 import (

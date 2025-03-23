@@ -1,3 +1,5 @@
+// Parses the flags/commands that are passed when invoking mdrss.
+
 package lib
 
 import (

@@ -1,4 +1,4 @@
-// various utils functions. Manly used for filesystem related things.
+// various utils functions. Mainly used for filesystem related things.
 
 package lib
 
