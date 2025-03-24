@@ -79,26 +79,44 @@ func newArticle(file fs.DirEntry, config Config) Article {
 	return parseMarkdown(article, config)
 }
 
-func (feed *Feed) getArticles() error {
-	rawArticles, err := os.ReadDir(feed.config.InputFolder)
-	if len(feed.config.topicInputFolder) > 0 {
-		rawArticles, err = os.ReadDir(feed.config.topicInputFolder)
-	}
+
+func (feed *Feed) getTopics() []string {
+	var topics []string
+	entries, err := os.ReadDir(feed.config.InputFolder)
 	if err != nil {
-		return err
+		Error.Println(err)
+	}
+	for _, entry := range entries {
+		if entry.IsDir() {
+			topics = append(topics, entry.Name())
+		}		
+	}
+	return topics
+}
+
+func getArticles(topic string, config Config) ([]Article, error) {
+	var articles []Article
+	rawArticles, err := os.ReadDir(config.InputFolder + "/" + topic)
+	if err != nil {
+		return articles, err
 	}
 	for _, file := range rawArticles {
-		if file.IsDir() {
-			feed.config.topicInputFolder = feed.config.InputFolder + "/" + file.Name()
-			feed.getArticles() //nolint:all
-		} else if !file.IsDir() && validFilename(file) {
-			feed.Articles = append(feed.Articles, newArticle(file, feed.config))
+		if !file.IsDir() && validFilename(file) {
+			articles = append(articles, newArticle(file, config))
 		}
 	}
-	return nil
+	return articles, nil
 }
 
 func (feed *Feed) FromConfig(config Config) error {
 	feed.config = config
-	return feed.getArticles()
+	topics := feed.getTopics()
+	for _, topic := range topics {
+		articles, err := getArticles(topic, feed.config)
+		if err != nil {
+			return err
+		}
+		feed.Articles = append(feed.Articles, articles...)
+	}
+	return nil
 }
