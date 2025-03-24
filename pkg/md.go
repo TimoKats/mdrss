@@ -80,9 +80,9 @@ func newArticle(file fs.DirEntry, config Config) Article {
 }
 
 
-func (feed *Feed) getTopics() []string {
+func getTopics(config Config) []string {
 	var topics []string
-	entries, err := os.ReadDir(feed.config.InputFolder)
+	entries, err := os.ReadDir(config.InputFolder)
 	if err != nil {
 		Error.Println(err)
 	}
@@ -110,7 +110,7 @@ func getArticles(topic string, config Config) ([]Article, error) {
 
 func (feed *Feed) FromConfig(config Config) error {
 	feed.config = config
-	topics := feed.getTopics()
+	topics := getTopics(config)
 	for _, topic := range topics {
 		articles, err := getArticles(topic, feed.config)
 		if err != nil {
