@@ -4,51 +4,50 @@
 package lib
 
 import (
-  "time"
+	"time"
 )
 
 type Article struct {
-  Id int
-  Guid string
-  Title string
-  Filename string
-  Description string
-  DatePublished time.Time
+	Id            int
+	Guid          string
+	Title         string
+	Filename      string
+	Description   string
+	DatePublished time.Time
 
-  // optional
-  Topic string
+	// optional
+	Topic string
 }
 
 type Config struct {
-  Description string
-  InputFolder string
-  Author string
-  Link string
+	Description string
+	InputFolder string
+	Author      string
+	Link        string
 
-  // optional (one is required)
-  OutputFolder string
-  OutputFile string
+	// optional (one is required)
+	OutputFolder string
+	OutputFile   string
 
-  // private
-  topicInputFolder string
+	// private
+	topicInputFolder string
 }
 
 type Feed struct {
-  Articles []Article
+	Articles []Article
 
-  // private
-  config Config
+	// private
+	config Config
 }
 
 type Configer interface {
-  valid() bool
+	valid() bool
 }
 
 type Feeder interface {
-  FromConfig(Config) error
-  ToXML() error
+	FromConfig(Config) error
+	ToXML() error
 
-  // private
-  getArticles() error
+	// private
+	getArticles() error
 }
-
