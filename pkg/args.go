@@ -9,7 +9,7 @@ import (
 )
 
 func getCommand(arguments []string) (string, error) {
-	validCommands := []string{"update", "ls", "conf", "init"}
+	validCommands := []string{"update", "ls"}
 	for _, validCommand := range validCommands {
 		for _, argument := range arguments {
 			if argument == validCommand {
@@ -17,7 +17,7 @@ func getCommand(arguments []string) (string, error) {
 			}
 		}
 	}
-	return "", errors.New("no valid command found. Use mdrss <<ls, update, conf, init>>")
+	return "", errors.New("no valid command found. Use mdrss <<ls, update>>")
 }
 
 func defaultConfigPath() string {

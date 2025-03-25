@@ -17,7 +17,7 @@ jobs:
           go-version: 1.21.2
       - name: smoke-tests
         run: |
-          go run mdrss.go ls --config test/config.ini
+          go run mdrss.go --config test/config ls
 
   linter:
     name: linter check
