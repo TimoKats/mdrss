@@ -8,17 +8,17 @@ on:
 
 jobs:
   test:
-    name: Smoke test
+    name: smoke test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: 1.21.2
-      - name: smoke-tests
+      - name: Run mdrss
         run: |
           go run mdrss.go --config test/config update
-          cat index.xml
+          cmp --silent index.xml test/test.xml && exit 0 || exit 1
 
   linter:
     name: linter check
