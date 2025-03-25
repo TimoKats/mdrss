@@ -43,7 +43,7 @@ type Configer interface {
 }
 
 type Feeder interface {
-	FromConfig(Config) error
+	FromConfig(config Config) error
 	ToXML(topic string) error
 
 	// private

@@ -7,6 +7,18 @@ on:
             - main
 
 jobs:
+  test:
+    name: linter check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.21.2
+      - name: smoke-tests
+        run: |
+          go run mdrss.go ls --config test/config.ini
+
   linter:
     name: linter check
     runs-on: ubuntu-latest
