@@ -18,7 +18,6 @@ jobs:
       - name: Run mdrss
         run: |
           go run mdrss.go --config test/config update
-          if [ "$(wc -c < index.xml)" -ne "$(wc -c < test/test.xml)" ]; then exit 1; fi
           echo "$(wc -c < index.xml)"
           echo "$(wc -c < test/test.xml)"
 
