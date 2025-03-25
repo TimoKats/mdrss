@@ -18,7 +18,7 @@ jobs:
       - name: Run mdrss
         run: |
           go run mdrss.go --config test/config update
-          cmp --silent index.xml test/test.xml && exit 0 || exit 1
+          cmp index.xml test/test.xml && exit 0 || exit 1
 
   linter:
     name: linter check
