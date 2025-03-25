@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: linter check
+    name: Smoke test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
