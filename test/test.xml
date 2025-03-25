@@ -4,12 +4,12 @@
 <title>Timo weblog</title>
 <author>Timo</author>
 <link>https://timokats.xyz</link>
-<lastBuildDate>25 Mar 25 20:52 +0000</lastBuildDate>
+<lastBuildDate>25 Mar 25 20:50 +0000</lastBuildDate>
 <description>Timo weblog</description>
 	<item>
 		<title>This is a title</title>
 		<link>https://timokats.xyz</link>
-		<pubDate>25 Mar 25 20:52 +0000</pubDate>
+		<pubDate>25 Mar 25 20:50 +0000</pubDate>
 		<guid>https://timokats.xyz/article</guid>
 		<description><![CDATA[<p>This is a paragraph I guess.</p>
 ]]></description>
@@ -17,7 +17,7 @@
 	<item>
 		<title>Dit is een titel</title>
 		<link>https://timokats.xyz</link>
-		<pubDate>25 Mar 25 20:52 +0000</pubDate>
+		<pubDate>25 Mar 25 20:50 +0000</pubDate>
 		<guid>https://timokats.xyz/artikel</guid>
 		<description><![CDATA[<p>Alle nederlanders weten dat dit artikel geen nuttige informatie bevat ;)</p>
 ]]></description>
