@@ -9,22 +9,11 @@ import (
 	"bufio"
 	"io/fs"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/html"	
 )
-
-func getLastFolder(path string) string {
-	cleanedPath := filepath.Clean(path)
-	parts := strings.Split(cleanedPath, string(filepath.Separator))
-	if len(parts) == 0 {
-		Error.Println("No folder found.")
-		return ""
-	}
-	return parts[len(parts)-1]
-}
 
 func formatGuid(file fs.DirEntry) string {
 	filename := strings.Split(file.Name(), ".")[0]
@@ -32,7 +21,8 @@ func formatGuid(file fs.DirEntry) string {
 }
 
 func validFilename(file fs.DirEntry) bool {
-	return !strings.HasPrefix(file.Name(), "draft-") && strings.HasSuffix(file.Name(), ".md")
+	return !strings.HasPrefix(file.Name(), "draft-") && 
+	strings.HasSuffix(file.Name(), ".md")
 }
 
 func checkMarkdownTitle(text string) bool {
@@ -66,55 +56,54 @@ func parseMarkdown(article Article, config Config) Article {
 	return article
 }
 
-func newArticle(file fs.DirEntry, config Config) Article {
+func newArticle(config Config, file fs.DirEntry, topic string) Article {
 	fileInfo, _ := file.Info()
 	article := Article{
 		Filename:      file.Name(),
 		DatePublished: fileInfo.ModTime(),
 		Guid:          config.Link + "/" + formatGuid(file),
-	}
-	if len(config.topicInputFolder) > 0 {
-		article.Topic = getLastFolder(config.topicInputFolder)
+		Topic:         topic,
 	}
 	return parseMarkdown(article, config)
 }
 
-
-func getTopics(feed *Feed) []string {
-	var topics []string
-	entries, err := os.ReadDir(feed.config.InputFolder)
-	if err != nil {
-		Error.Println(err)
-	}
-	for _, entry := range entries {
-		if entry.IsDir() {
-			topics = append(topics, entry.Name())
-		}		
-	}
-	return topics
-}
-
-func getArticles(topic string, config Config) ([]Article, error) {
+func (feed *Feed) getArticles(topic string) ([]Article, error) {
 	var articles []Article
-	rawArticles, err := os.ReadDir(config.InputFolder + "/" + topic)
+	rawArticles, err := os.ReadDir(feed.config.InputFolder + "/" + topic)
 	if err != nil {
 		return articles, err
 	}
 	for _, file := range rawArticles {
 		if !file.IsDir() && validFilename(file) {
-			articles = append(articles, newArticle(file, config))
+			articles = append(articles, newArticle(feed.config, file, topic))
 		}
 	}
 	return articles, nil
 }
 
+func (feed *Feed) getTopics() error {
+	entries, err := os.ReadDir(feed.config.InputFolder)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		if entry.IsDir() {
+			feed.topics = append(feed.topics, entry.Name())
+		}
+	}
+	feed.topics = append(feed.topics, "") // for root folder articles
+	return nil
+}
+
 func (feed *Feed) FromConfig(config Config) error {
 	feed.config = config
-	topics := feed.getTopics()
-	for _, topic := range topics {
-		articles, err := getArticles(topic, feed.config)
-		if err != nil {
-			return err
+	if 	topicErr := feed.getTopics(); topicErr != nil {
+		return topicErr
+	}
+	for _, topic := range feed.topics {
+		articles, articleErr := feed.getArticles(topic)
+		if articleErr != nil {
+			return articleErr
 		}
 		feed.Articles = append(feed.Articles, articles...)
 	}

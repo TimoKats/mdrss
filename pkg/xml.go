@@ -2,12 +2,22 @@
 // is called by the main control flow with a Feed object. The remaining functions add
 // the header and item strings and write the XML to the file system.
 
+// Update: topics are added, so now ToXML can alternate between writing seperate files
+// or a single file where the topics are part of the tags.
+
 package lib
 
 import (
 	"os"
 	"time"
 )
+
+func createFileName(config Config, topic string) string {
+	if topic != "" {
+		return config.OutputFolder + "/" + topic + ".xml"
+	}
+	return config.OutputFolder + "/index.xml"
+}
 
 func addItem(xmlContent string, config Config, article Article) string {
 	timestamp := article.DatePublished.Format(time.RFC822Z)
@@ -37,11 +47,14 @@ func addHeader(config Config) string {
 	return xmlContent
 }
 
-func createXMLByteString(articles []Article, config Config) []byte {
-	xmlContent := addHeader(config)
-	for _, article := range articles {
+func createRssFeed(feed *Feed, topic string) []byte {
+	xmlContent := addHeader(feed.config)
+	for _, article := range feed.Articles {
+		if article.Topic != topic && len(feed.config.OutputFolder) > 0 {
+			continue
+		}
 		if len(article.Title) != 0 {
-			xmlContent = addItem(xmlContent, config, article)
+			xmlContent = addItem(xmlContent, feed.config, article)
 			Info.Printf("Added '%s' to RSS feed. ", article.Title)
 		} else {
 			Warn.Printf("%s doesn't have a valid markdown title.", article.Filename)
@@ -51,29 +64,11 @@ func createXMLByteString(articles []Article, config Config) []byte {
 	return []byte(xmlContent)
 }
 
-func mapTopicToFile(feed *Feed) map[string][]Article {
-	fileMap := make(map[string][]Article)
-	for _, article := range feed.Articles {
-		_, ok := fileMap[article.Topic]
-		if !ok {
-			if len(article.Topic) == 0 {
-				fileMap["index"] = []Article{article}
-			} else {
-				fileMap[article.Topic] = []Article{article}
-			}
-		} else {
-			fileMap[article.Topic] = append(fileMap[article.Topic], article)
-		}
-	}
-	return fileMap
-}
-
 func (feed *Feed) ToXML() error {
 	if len(feed.config.OutputFolder) > 0 {
-		fileMap := mapTopicToFile(feed)
-		for filename, articles := range fileMap {
-			rssByte := createXMLByteString(articles, feed.config)
-			filepath := feed.config.OutputFolder + "/" + filename + ".xml"
+		for _, topic := range feed.topics {
+			rssByte := createRssFeed(feed, topic)
+			filepath := createFileName(feed.config, topic)
 			fileErr := os.WriteFile(filepath, rssByte, 0644)
 			if fileErr != nil {
 				return fileErr
@@ -81,7 +76,7 @@ func (feed *Feed) ToXML() error {
 			Info.Printf("Content written to %s", filepath)
 		}
 	} else {
-		rssByte := createXMLByteString(feed.Articles, feed.config)
+		rssByte := createRssFeed(feed, "")
 		Info.Printf("Content written to %s", feed.config.OutputFile)
 		return os.WriteFile(feed.config.OutputFile, rssByte, 0644)
 	}

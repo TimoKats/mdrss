@@ -12,24 +12,21 @@ import (
 
 func ls(config mdrss.Config) error {
 	var feed mdrss.Feed
-	err := feed.FromConfig(config)
-	if err != nil {
+	if err := feed.FromConfig(config); err != nil {
 		return err
 	}
 	for _, article := range feed.Articles {
 		mdrss.Info.Printf("%s/%s", article.Topic, article.Filename)
 	}
-	return err
+	return nil
 }
 
 func update(config mdrss.Config) error {
 	var feed mdrss.Feed
-	markdownErr := feed.FromConfig(config)
-	if markdownErr != nil {
-		return markdownErr
+	if mdErr := feed.FromConfig(config); mdErr != nil {
+		return mdErr
 	}
-	rssErr := feed.ToXML()
-	return rssErr
+	return feed.ToXML()
 }
 
 func parse(command string, config mdrss.Config) error {

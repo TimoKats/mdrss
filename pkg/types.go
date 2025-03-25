@@ -1,5 +1,5 @@
 // Types/Interfaces for creating feeds. A feed consists of a config and list of articles.
-// The interface has two functions, from markdown, to XML (which makes sense...).
+// The interface has public two functions, from config, to XML (which makes sense...).
 
 package lib
 
@@ -28,9 +28,6 @@ type Config struct {
 	// optional (one is required)
 	OutputFolder string
 	OutputFile   string
-
-	// private
-	topicInputFolder string
 }
 
 type Feed struct {
@@ -38,6 +35,7 @@ type Feed struct {
 
 	// private
 	config Config
+	topics []string
 }
 
 type Configer interface {
@@ -46,8 +44,9 @@ type Configer interface {
 
 type Feeder interface {
 	FromConfig(Config) error
-	ToXML() error
+	ToXML(topic string) error
 
 	// private
-	getArticles() error
+	getArticles(topic string) ([]Article, error)
+	getTopics() error
 }
