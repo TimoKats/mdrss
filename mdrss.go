@@ -4,54 +4,52 @@
 package main
 
 import (
-	"errors"
-	"os"
-
-	mdrss "github.com/TimoKats/mdrss/pkg"
+  mdrss "github.com/TimoKats/mdrss/pkg"
+  "errors"
+  "os"
 )
 
 func ls(config mdrss.Config) error {
-	var feed mdrss.Feed
-	if err := feed.FromConfig(config); err != nil {
-		return err
-	}
-	for _, article := range feed.Articles {
-		mdrss.Info.Printf("%s/%s", article.Topic, article.Filename)
-	}
-	return nil
+  var feed mdrss.Feed
+  err := feed.FromConfig(config)
+  if err != nil { return err }
+  for _, article := range feed.Articles {
+    mdrss.Info.Printf("%s/%s", article.Topic, article.Filename)
+  }
+  return err
 }
 
 func update(config mdrss.Config) error {
-	var feed mdrss.Feed
-	if mdErr := feed.FromConfig(config); mdErr != nil {
-		return mdErr
-	}
-	return feed.ToXML()
+  var feed mdrss.Feed
+  markdownErr := feed.FromConfig(config)
+  if markdownErr != nil { return markdownErr }
+  rssErr := feed.ToXML()
+  return rssErr
 }
 
 func parse(command string, config mdrss.Config) error {
-	switch command {
-	case "ls":
-		return ls(config)
-	case "update":
-		return update(config)
-	default:
-		return errors.New("Command not found.")
-	}
+  switch (command) {
+    case "ls":
+      return ls(config)
+    case "update":
+      return update(config)
+    default:
+      return errors.New("Command not found.")
+  }
 }
 
 func main() {
-	// get arguments and config
-	arguments, argumentErr := mdrss.ParseArguments(os.Args)
-	config, configErr := mdrss.ReadConfig(*arguments["config"])
-	mdrss.Info.Printf("Using config location: %v", *arguments["config"])
-	if err := errors.Join(argumentErr, configErr); err != nil {
-		mdrss.Error.Println(err)
-		return
-	}
-	// run command
-	commandErr := parse(*arguments["command"], config)
-	if commandErr != nil {
-		mdrss.Error.Println(commandErr)
-	}
+  // get arguments and config
+  arguments, argumentErr := mdrss.ParseArguments(os.Args)
+  config, configErr := mdrss.ReadConfig(*arguments["config"])
+  mdrss.Info.Printf("Using config location: %v", *arguments["config"])
+  if err := errors.Join(argumentErr, configErr); err != nil {
+    mdrss.Error.Println(err); return
+  }
+  // run command
+  commandErr := parse(*arguments["command"], config)
+  if commandErr != nil {
+    mdrss.Error.Println(commandErr)
+  }
 }
+

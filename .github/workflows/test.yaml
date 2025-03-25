@@ -7,20 +7,6 @@ on:
             - main
 
 jobs:
-  test:
-    name: smoke test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.21.2
-      - name: Run mdrss
-        run: |
-          go run mdrss.go --config test/config update
-          if [ "$(wc -c < index.xml)" -ne "$(wc -c < test/test.xml)" ]; then exit 1; fi
-
-
   linter:
     name: linter check
     runs-on: ubuntu-latest

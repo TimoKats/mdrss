@@ -1,52 +1,54 @@
 // Types/Interfaces for creating feeds. A feed consists of a config and list of articles.
-// The interface has public two functions, from config, to XML (which makes sense...).
+// The interface has two functions, from markdown, to XML (which makes sense...).
 
 package lib
 
 import (
-	"time"
+  "time"
 )
 
 type Article struct {
-	Id            int
-	Guid          string
-	Title         string
-	Filename      string
-	Description   string
-	DatePublished time.Time
+  Id int
+  Guid string
+  Title string
+  Filename string
+  Description string
+  DatePublished time.Time
 
-	// optional
-	Topic string
+  // optional
+  Topic string
 }
 
 type Config struct {
-	Description string
-	InputFolder string
-	Author      string
-	Link        string
+  Description string
+  InputFolder string
+  Author string
+  Link string
 
-	// optional (one is required)
-	OutputFolder string
-	OutputFile   string
+  // optional (one is required)
+  OutputFolder string
+  OutputFile string
+
+  // private
+  topicInputFolder string
 }
 
 type Feed struct {
-	Articles []Article
+  Articles []Article
 
-	// private
-	config Config
-	topics []string
+  // private
+  config Config
 }
 
 type Configer interface {
-	valid() bool
+  valid() bool
 }
 
 type Feeder interface {
-	FromConfig(config Config) error
-	ToXML(topic string) error
+  FromConfig(Config) error
+  ToXML() error
 
-	// private
-	getArticles(topic string) ([]Article, error)
-	getTopics() error
+  // private
+  getArticles() error
 }
+
