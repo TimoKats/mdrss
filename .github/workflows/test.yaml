@@ -18,7 +18,10 @@ jobs:
       - name: Run mdrss
         run: |
           go run mdrss.go --config test/config update
-          [ "$(wc -c < index.xml)" -eq "$(wc -c < test/test.xml)" ]
+          if [ "$(wc -c < index.xml)" -ne "$(wc -c < test/test.xml)" ]; then exit 1; fi
+          echo "$(wc -c < index.xml)"
+          echo "$(wc -c < test/test.xml)"
+
 
   linter:
     name: linter check
