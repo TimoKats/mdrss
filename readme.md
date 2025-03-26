@@ -21,28 +21,6 @@ Finally, you can type `mdrss ls` to view the articles ready for publishing and `
 
 ## Docs
 
-#### Commands
-
-<table>
-  <thead>
-    <tr>
-      <th width="500px">Command</th>
-      <th width="500px">Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr width="600px">
-      <td>ls</td>
-      <td>Lists the topics/articles that would be published.</td>
-    </tr>
-    <tr width="600px">
-      <td>update</td>
-      <td>Writes articles to RSS feed.</td>
-    </tr>
-  </tbody>
-</table>
-
-#### Config
 Note, topics are added based on subfolders in your input folder. For example, if your input folder is `articles/`, then `articles/tech` will contain the markdown files for tech related articles.
 
 <table>
@@ -72,6 +50,10 @@ Note, topics are added based on subfolders in your input folder. For example, if
     <tr width="600px">
       <td>OutputFolder</td>
       <td>Set this to write RSS topics to seperate XML files in one folder. File names will be based on topics. </td>
+    </tr>
+    <tr width="600px">
+      <td>Link</td>
+      <td>A bit redundant, but you can set this to the page hosting the RSS feed. </td>
     </tr>
   </tbody>
 </table>
