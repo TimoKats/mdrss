@@ -1,7 +1,7 @@
 // Module responsible for reading markdown files and converting it to valid HTML.
 // FromConfig is called by the main control flow. It adds the config first and then
-// the articles using a (semi) recursive function. Remaining functions are helpers
-// for converting markdown to HMTL, etc.
+// the articles per topic. Remaining functions are helpers for converting markdown 
+// to HMTL, etc.
 
 package lib
 

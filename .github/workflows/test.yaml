@@ -19,8 +19,6 @@ jobs:
         run: |
           go run mdrss.go --config test/config update
           if [ "$(wc -c < index.xml)" -ne "$(wc -c < test/test.xml)" ]; then exit 1; fi
-
-
   linter:
     name: linter check
     runs-on: ubuntu-latest

@@ -38,15 +38,3 @@ type Feed struct {
 	topics []string
 }
 
-type Configer interface {
-	valid() bool
-}
-
-type Feeder interface {
-	FromConfig(config Config) error
-	ToXML(topic string) error
-
-	// private
-	getArticles(topic string) ([]Article, error)
-	getTopics() error
-}
