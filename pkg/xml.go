@@ -47,7 +47,7 @@ func addHeader(config Config) string {
 	return xmlContent
 }
 
-func createRssFeed(feed *Feed, topic string) []byte {
+func (feed *Feed) createRssFeed(topic string) []byte {
 	xmlContent := addHeader(feed.config)
 	for _, article := range feed.Articles {
 		if article.Topic != topic && len(feed.config.OutputFolder) > 0 {
@@ -67,7 +67,7 @@ func createRssFeed(feed *Feed, topic string) []byte {
 func (feed *Feed) ToXML() error {
 	if len(feed.config.OutputFolder) > 0 {
 		for _, topic := range feed.topics {
-			rssByte := createRssFeed(feed, topic)
+			rssByte := feed.createRssFeed(topic)
 			filepath := createFileName(feed.config, topic)
 			fileErr := os.WriteFile(filepath, rssByte, 0644)
 			if fileErr != nil {
@@ -76,7 +76,7 @@ func (feed *Feed) ToXML() error {
 			Info.Printf("Content written to %s", filepath)
 		}
 	} else {
-		rssByte := createRssFeed(feed, "")
+		rssByte := feed.createRssFeed("")
 		Info.Printf("Content written to %s", feed.config.OutputFile)
 		return os.WriteFile(feed.config.OutputFile, rssByte, 0644)
 	}
