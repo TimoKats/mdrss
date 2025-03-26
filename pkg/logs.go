@@ -15,15 +15,15 @@ var (
 	Fatal  *log.Logger
 )
 
-var Reset = "\033[0m"
-var Red = "\033[31m"
-var Yellow = "\033[33m"
-var Blue = "\033[34m"
-var Magenta = "\033[35m"
+var reset = "\033[0m"
+var red = "\033[31m"
+var yellow = "\033[33m"
+var blue = "\033[34m"
+var magenta = "\033[35m"
 
 func init() {
-	Info = log.New(os.Stdout, Blue+"info:     "+Reset, log.Ltime)
-	Warn = log.New(os.Stdout, Yellow+"warning:  "+Reset, log.Ltime)
-	Error = log.New(os.Stdout, Red+"error:    "+Reset, log.Ltime)
-	Fatal = log.New(os.Stdout, Magenta+"fatal:    "+Reset, log.Ltime)
+	Info = log.New(os.Stdout, blue+"info:     "+reset, log.Ltime)
+	Warn = log.New(os.Stdout, yellow+"warning:  "+reset, log.Ltime)
+	Error = log.New(os.Stdout, red+"error:    "+reset, log.Ltime)
+	Fatal = log.New(os.Stdout, magenta+"fatal:    "+reset, log.Ltime)
 }

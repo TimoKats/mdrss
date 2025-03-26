@@ -23,8 +23,8 @@ func ls(config mdrss.Config) error {
 
 func update(config mdrss.Config) error {
 	var feed mdrss.Feed
-	if mdErr := feed.FromConfig(config); mdErr != nil {
-		return mdErr
+	if err := feed.FromConfig(config); err != nil {
+		return err
 	}
 	return feed.ToXML()
 }
