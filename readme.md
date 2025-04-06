@@ -1,5 +1,5 @@
 # 📝MDRSS
-
+[![Go Report](https://goreportcard.com/badge/github.com/TimoKats/mdrss)](https://goreportcard.com/badge/github.com/TimoKats/mdrss)
 [![Test](https://github.com/TimoKats/mdrss/actions/workflows/test.yaml/badge.svg)](https://github.com/TimoKats/mdrss/actions/workflows/test.yaml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub tag](https://img.shields.io/github/tag/TimoKats/mdrss?include_prereleases=&sort=semver&color=blue)](https://github.com/TimoKats/mdrss/releases/)
