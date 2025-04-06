@@ -1,6 +1,6 @@
 // Module responsible for reading markdown files and converting it to valid HTML.
 // FromConfig is called by the main control flow. It adds the config first and then
-// the articles per topic. Remaining functions are helpers for converting markdown 
+// the articles per topic. Remaining functions are helpers for converting markdown
 // to HMTL, etc.
 
 package lib
@@ -12,7 +12,7 @@ import (
 	"strings"
 
 	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/html"	
+	"github.com/gomarkdown/markdown/html"
 )
 
 func formatGuid(file fs.DirEntry) string {
@@ -21,8 +21,8 @@ func formatGuid(file fs.DirEntry) string {
 }
 
 func validFilename(file fs.DirEntry) bool {
-	return !strings.HasPrefix(file.Name(), "draft-") && 
-	strings.HasSuffix(file.Name(), ".md")
+	return !strings.HasPrefix(file.Name(), "draft-") &&
+		strings.HasSuffix(file.Name(), ".md")
 }
 
 func checkMarkdownTitle(text string) bool {
@@ -97,7 +97,7 @@ func (feed *Feed) getTopics() error {
 
 func (feed *Feed) FromConfig(config Config) error {
 	feed.config = config
-	if 	topicErr := feed.getTopics(); topicErr != nil {
+	if topicErr := feed.getTopics(); topicErr != nil {
 		return topicErr
 	}
 	for _, topic := range feed.topics {

@@ -37,4 +37,3 @@ type Feed struct {
 	config Config
 	topics []string
 }
-
