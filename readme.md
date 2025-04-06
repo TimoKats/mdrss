@@ -1,6 +1,5 @@
 # 📝MDRSS
 
-[![Go Report Card](https://goreportcard.com/badge/TimoKats/mdrss)](https://goreportcard.com/report/TimoKats/mdrss)
 [![Test](https://github.com/TimoKats/mdrss/actions/workflows/test.yaml/badge.svg)](https://github.com/TimoKats/mdrss/actions/workflows/test.yaml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub tag](https://img.shields.io/github/tag/TimoKats/mdrss?include_prereleases=&sort=semver&color=blue)](https://github.com/TimoKats/mdrss/releases/)
@@ -22,7 +21,7 @@ Link=index.xml ; can be anything, might be deprecated
 ```
 
 ## Publication
-In your input folder, you can add an article by creating a `.md` file. Note, if your filename is prefixed with `draft-` it will not be included in the RSS file.  
+In your input folder, you can add an article by creating a .md file. Note, if your filename is prefixed with `draft-` it will not be included in the RSS file.  
 
 Finally, you can type `mdrss ls` to view the articles ready for publishing and `mdrss update` to create the RSS feed. Note, the title of the RSS articles are based on markdown headers. E.g. format the first line of the markdown articles as so: `# this is a title`.
 
