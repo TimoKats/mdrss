@@ -2,7 +2,7 @@
 // is called by the main control flow with a Feed object. The remaining functions add
 // the header and item strings and write the XML to the file system.
 
-// Update: topics are added, so now ToXML can alternate between writing seperate files
+// Update: topics are added, so now ToXML can alternate between writing separate files
 // or a single file where the topics are part of the tags.
 
 package lib
