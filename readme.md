@@ -1,10 +1,7 @@
 # 📝MDRSS
 [![Go Report](https://goreportcard.com/badge/github.com/TimoKats/mdrss)](https://goreportcard.com/badge/github.com/TimoKats/mdrss)
-[![Test](https://github.com/TimoKats/mdrss/actions/workflows/test.yaml/badge.svg)](https://github.com/TimoKats/mdrss/actions/workflows/test.yaml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub tag](https://img.shields.io/github/tag/TimoKats/mdrss?include_prereleases=&sort=semver&color=blue)](https://github.com/TimoKats/mdrss/releases/)
-[![stars - mdrss](https://img.shields.io/github/stars/TimoKats/mdrss?style=social)](https://github.com/TimoKats/mdrss)
-[![forks - mdrss](https://img.shields.io/github/forks/TimoKats/mdrss?style=social)](https://github.com/TimoKats/mdrss)
 
 
 MDRSS is a markdown to RSS converter written in GO. With this tool, you can write articles in a local folder and have them automatically formatted to an RSS compliamdrss XML file. Moreover, MDRSS automatically takes care of publication dates, categories, formatting, etc.
