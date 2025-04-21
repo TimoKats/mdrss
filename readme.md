@@ -25,7 +25,7 @@ Finally, you can type `mdrss ls` to view the articles ready for publishing and `
 
 ## Docs
 
-Note, topics are added based on subfolders in your input folder. For example, if your input folder is `articles/`, then `articles/tech` will comdrssain the markdown files for tech related articles.
+Note, topics are added based on subfolders in your input folder. For example, if your input folder is `articles/`, then `articles/tech` will contain the markdown files for tech related articles.
 
 <table>
   <thead>
@@ -45,7 +45,7 @@ Note, topics are added based on subfolders in your input folder. For example, if
     </tr>
     <tr width="600px">
       <td>InputFolder</td>
-      <td>Folder comdrssaining the markdown files. Add subfolders to enable the usage of topics.</td>
+      <td>Folder containing the markdown files. Add subfolders to enable the usage of topics.</td>
     </tr>
     <tr width="600px">
       <td>OutputFile</td>
@@ -57,7 +57,7 @@ Note, topics are added based on subfolders in your input folder. For example, if
     </tr>
     <tr width="600px">
       <td>Link</td>
-      <td>A bit redundamdrss, but you can set this to the page hosting the RSS feed. </td>
+      <td>A bit redundant, but you can set this to the page hosting the RSS feed. </td>
     </tr>
   </tbody>
 </table>
